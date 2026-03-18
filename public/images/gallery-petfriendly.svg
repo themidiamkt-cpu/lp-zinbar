@@ -1,0 +1,35 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1200" fill="#090607"/>
+  <rect width="1200" height="1200" fill="url(#paint0_radial)"/>
+  <g filter="url(#filter0_f)" opacity="0.68">
+    <circle cx="258" cy="250" r="178" fill="#8F1D31"/>
+    <circle cx="970" cy="258" r="142" fill="#D7C097"/>
+  </g>
+  <rect x="182" y="240" width="836" height="700" rx="36" fill="#151012" stroke="#D7C097" stroke-opacity="0.14"/>
+  <rect x="244" y="300" width="710" height="576" rx="28" fill="#1A1012"/>
+  <path d="M244 620C340 564 444 536 556 536C644 536 736 560 830 560C874 560 916 554 954 542V876H244V620Z" fill="url(#paint1_linear)"/>
+  <circle cx="372" cy="420" r="28" fill="#D7C097" fill-opacity="0.18"/>
+  <circle cx="450" cy="372" r="28" fill="#D7C097" fill-opacity="0.16"/>
+  <circle cx="528" cy="430" r="28" fill="#D7C097" fill-opacity="0.14"/>
+  <path d="M720 718C774 718 818 680 818 632C818 592 784 558 738 548C716 542 692 542 670 548C624 558 590 592 590 632C590 680 634 718 688 718H720Z" fill="#D7C097" fill-opacity="0.14"/>
+  <circle cx="634" cy="516" r="24" fill="#D7C097" fill-opacity="0.12"/>
+  <circle cx="720" cy="498" r="24" fill="#D7C097" fill-opacity="0.12"/>
+  <circle cx="574" cy="608" r="24" fill="#D7C097" fill-opacity="0.12"/>
+  <circle cx="806" cy="608" r="24" fill="#D7C097" fill-opacity="0.12"/>
+  <rect x="316" y="948" width="568" height="100" rx="30" fill="#1A1012" stroke="#D7C097" stroke-opacity="0.12"/>
+  <defs>
+    <filter id="filter0_f" x="-120" y="-128" width="1490" height="764" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="100" result="effect1_foregroundBlur"/>
+    </filter>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(600 96) rotate(90) scale(1104 1143.52)">
+      <stop stop-color="#261014"/>
+      <stop offset="1" stop-color="#090607"/>
+    </radialGradient>
+    <linearGradient id="paint1_linear" x1="599" y1="536" x2="599" y2="876" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8F1D31" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#12090B" stop-opacity="0.82"/>
+    </linearGradient>
+  </defs>
+</svg>

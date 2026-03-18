@@ -1,0 +1,33 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1200" fill="#090607"/>
+  <rect width="1200" height="1200" fill="url(#paint0_radial)"/>
+  <g filter="url(#filter0_f)" opacity="0.76">
+    <circle cx="972" cy="208" r="154" fill="#D7C097"/>
+    <circle cx="236" cy="290" r="208" fill="#8F1D31"/>
+  </g>
+  <path d="M0 756C136 688 268 654 396 654C534 654 662 696 800 696C934 696 1068 658 1200 586V1200H0V756Z" fill="url(#paint1_linear)"/>
+  <circle cx="906" cy="270" r="114" fill="#D7C097" fill-opacity="0.22"/>
+  <circle cx="906" cy="270" r="76" fill="#D7C097" fill-opacity="0.14"/>
+  <path d="M356 736H844" stroke="#D7C097" stroke-opacity="0.2" stroke-width="2"/>
+  <circle cx="436" cy="736" r="54" fill="#D7C097" fill-opacity="0.08"/>
+  <circle cx="600" cy="736" r="54" fill="#D7C097" fill-opacity="0.08"/>
+  <circle cx="764" cy="736" r="54" fill="#D7C097" fill-opacity="0.08"/>
+  <path d="M468 400H732L702 558C692 622 638 670 572 670H628C562 670 508 622 498 558L468 400Z" fill="#1A1012" stroke="#D7C097" stroke-opacity="0.16"/>
+  <path d="M520 400H680L660 522C653 565 617 598 574 598H626C583 598 547 565 540 522L520 400Z" fill="#F4ECE3" fill-opacity="0.08"/>
+  <defs>
+    <filter id="filter0_f" x="-172" y="-136" width="1490" height="734" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="100" result="effect1_foregroundBlur"/>
+    </filter>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(600 96) rotate(90) scale(1104 1143.52)">
+      <stop stop-color="#261014"/>
+      <stop offset="1" stop-color="#090607"/>
+    </radialGradient>
+    <linearGradient id="paint1_linear" x1="600" y1="654" x2="600" y2="1200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8F1D31" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#12090B" stop-opacity="0.96"/>
+    </linearGradient>
+  </defs>
+</svg>
+
