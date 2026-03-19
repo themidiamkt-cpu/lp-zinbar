@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { landingData } from "@/data/landing-data";
 import { cn } from "@/utils/cn";
 
@@ -8,9 +10,14 @@ type LogoProps = {
 export function Logo({ compact = false }: LogoProps) {
   return (
     <div className="flex items-center gap-3">
-      <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-champagne/25 bg-[linear-gradient(180deg,rgba(143,29,49,0.52),rgba(15,9,10,0.92))] text-sm font-semibold tracking-[0.4em] text-champagne shadow-glow">
-        Z
-      </div>
+      <Image
+        src="/images/logo.png"
+        alt={`Logo ${landingData.business.label}`}
+        width={48}
+        height={48}
+        className="h-12 w-12 rounded-full shadow-glow"
+        priority
+      />
 
       <div>
         <p className="font-serif text-xl leading-none tracking-[0.08em] text-ivory">

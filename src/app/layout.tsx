@@ -10,19 +10,26 @@ export const metadata: Metadata = {
   description: landingData.seo.description,
   keywords: landingData.seo.keywords,
   applicationName: landingData.business.name,
+  icons: {
+    icon: "/images/logo.png",
+    shortcut: "/images/logo.png",
+    apple: "/images/logo.png",
+  },
   category: "restaurant",
   openGraph: {
     title: landingData.seo.title,
     description: landingData.seo.description,
+    images: ["/images/logo.png"],
     locale: "pt_BR",
     siteName: landingData.business.name,
-    type: "website"
+    type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: landingData.seo.title,
-    description: landingData.seo.description
-  }
+    description: landingData.seo.description,
+    images: ["/images/logo.png"],
+  },
 };
 
 export default function RootLayout({

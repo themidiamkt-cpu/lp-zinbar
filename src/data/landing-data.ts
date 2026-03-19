@@ -553,7 +553,7 @@ export const landingData = {
       {
         question: "Onde vejo o cardápio do Zin Bar?",
         answer:
-          "O botão de cardápio leva você para a área com destaques da casa e antecipa pratos, cervejas, drinks e porções para ajudar na escolha.",
+          "O botão de cardápio leva direto para o cardápio online do Zin Bar, onde você pode conferir as opções atualizadas da casa.",
       },
     ],
   },
@@ -568,8 +568,8 @@ export const landingData = {
     usefulLinks: [
       { label: "Localização", href: "#localizacao" },
       { label: "Diferenciais", href: "#diferenciais" },
-      { label: "Cardápio", href: "#cardapio" },
       { label: "Avaliações", href: "#avaliacoes" },
+      { label: "Horários", href: "#horarios" },
       { label: "FAQ", href: "#faq" },
     ],
     socialLinks: [

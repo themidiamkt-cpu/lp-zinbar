@@ -7,7 +7,6 @@ import { HeroSection } from "@/sections/hero-section";
 import { HoursSection } from "@/sections/hours-section";
 import { IdealForSection } from "@/sections/ideal-for-section";
 import { LocationSection } from "@/sections/location-section";
-import { FeaturedMenuSection } from "@/sections/menu-section";
 import { FaqSection } from "@/sections/faq-section";
 import { ReservationSection } from "@/sections/reservation-section";
 import { SocialProofSection } from "@/sections/social-proof-section";
@@ -39,7 +38,6 @@ export default function Home() {
           <DifferentialsSection />
           <GallerySection />
           <IdealForSection />
-          <FeaturedMenuSection />
           <SocialProofSection />
           <ReservationSection />
           <HoursSection />
@@ -53,4 +51,3 @@ export default function Home() {
     </>
   );
 }
-
