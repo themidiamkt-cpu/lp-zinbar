@@ -52,6 +52,18 @@ export type ScheduleDay = {
 
 export type GalleryLayout = "featured" | "tall" | "wide" | "square";
 
+type ProofItem = {
+  icon: IconName;
+  title: string;
+  description: string;
+};
+
+type IconFeatureItem = {
+  icon: IconName;
+  title: string;
+  description: string;
+};
+
 type BusinessData = {
   name: string;
   label: string;
@@ -120,6 +132,7 @@ const actions = {
     href: "#reserva",
     icon: "whatsapp",
     variant: "ghost",
+    external: false,
   },
 } satisfies Record<"directions" | "reservation" | "menu" | "whatsapp", ActionLink>;
 
@@ -164,21 +177,21 @@ export const landingData = {
       "Cervejas, lanches, porções, pratos e drinks em uma casa descontraída, prática de chegar e confortável para família, amigos e encontros que pedem mais tempo à mesa.",
     proofItems: [
       {
-        icon: "star" as IconName,
+        icon: "star",
         title: "Mais de 5 mil avaliações",
         description: "Presença local forte e uma casa já conhecida por muita gente em Campinas.",
       },
       {
-        icon: "mapPin" as IconName,
+        icon: "mapPin",
         title: business.addressLine,
         description: `${business.neighborhood}, ${business.city}`,
       },
       {
-        icon: "family" as IconName,
+        icon: "family",
         title: "Kids e pet friendly",
         description: "Boa escolha para família, amigos e encontros sem complicação.",
       },
-    ],
+    ] satisfies ProofItem[],
     supportingLine:
       "Escolha prática para quem quer decidir rápido entre restaurante, bar aberto agora ou happy hour em Campinas sem cair em algo genérico.",
   },
@@ -236,7 +249,7 @@ export const landingData = {
           "Uma opção prática para quem quer incluir crianças e pets sem abrir mão de uma boa experiência.",
         icon: "pet",
       },
-    ],
+    ] satisfies IconFeatureItem[],
   },
   gallery: {
     eyebrow: "Ambiente e pratos",
@@ -344,7 +357,7 @@ export const landingData = {
           "Boa escolha para pequenos encontros e datas que pedem ambiente marcante.",
         icon: "party",
       },
-    ],
+    ] satisfies IconFeatureItem[],
   },
   menu: {
     eyebrow: "Cardápio em destaque",
