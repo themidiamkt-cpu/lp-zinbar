@@ -165,8 +165,8 @@ export const landingData = {
     proofItems: [
       {
         icon: "star" as IconName,
-        title: "4,4 no Google",
-        description: "5.234 avaliações que reforçam a presença local da casa.",
+        title: "Mais de 5 mil avaliações",
+        description: "Presença local forte e uma casa já conhecida por muita gente em Campinas.",
       },
       {
         icon: "mapPin" as IconName,
@@ -396,10 +396,10 @@ export const landingData = {
     title: "Quando o ambiente acerta, o encontro rende mais.",
     description:
       "Quem escolhe o Zin Bar costuma destacar o equilíbrio entre ambiente acolhedor, conveniência no Taquaral e uma operação já conhecida por muita gente em Campinas.",
-    ratingLabel: "4,4",
-    reviewsLabel: "5.234 avaliações no Google",
+    ratingLabel: "",
+    reviewsLabel: "Mais de 5 mil avaliações",
     ratingCaption:
-      "Leitura rápida da reputação local do perfil, com volume alto de avaliações e presença consolidada na busca.",
+      "Presença consolidada na busca local e recorrência de clientes que já conhecem a casa.",
     trustPoints: [
       "Mais de 5 mil avaliações",
       "Happy hour",

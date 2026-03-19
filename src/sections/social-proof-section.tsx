@@ -22,16 +22,15 @@ export function SocialProofSection() {
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-champagne/84">
               Autoridade local
             </p>
-            <div className="mt-6 flex items-end gap-4">
-              <p className="font-serif text-6xl leading-none text-ivory">{socialProof.ratingLabel}</p>
-              <div className="pb-2">
-                <div className="flex items-center gap-1 text-champagne">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <Icon key={index} name="star" className="h-4 w-4" />
-                  ))}
-                </div>
-                <p className="mt-2 text-sm text-mist/74">{socialProof.reviewsLabel}</p>
+            <div className="mt-6">
+              <div className="flex items-center gap-1 text-champagne">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <Icon key={index} name="star" className="h-4 w-4" />
+                ))}
               </div>
+              <p className="mt-4 font-serif text-4xl leading-none text-ivory sm:text-5xl">
+                {socialProof.reviewsLabel}
+              </p>
             </div>
 
             <p className="mt-4 text-sm leading-7 text-mist/76">{socialProof.ratingCaption}</p>
