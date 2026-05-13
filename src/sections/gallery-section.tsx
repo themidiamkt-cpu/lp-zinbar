@@ -28,27 +28,33 @@ export function GallerySection() {
           />
         </Reveal>
 
-        <div className="mt-10 grid auto-rows-[220px] gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid auto-rows-[200px] gap-3 sm:auto-rows-[220px] sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
           {gallery.items.map((item, index) => (
             <Reveal
               key={item.title}
               delay={index * 60}
               className={cn(layoutClassMap[item.layout])}
             >
-              <div className="group relative h-full overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04]">
+              <figure className="group relative h-full overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] transition duration-500 hover:border-champagne/25">
                 <Image
                   src={item.src}
                   alt={item.alt}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  className="object-cover transition duration-700 group-hover:scale-[1.03]"
+                  className="object-cover transition duration-[1200ms] ease-out group-hover:scale-[1.06]"
                 />
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,5,6,0.04),rgba(7,5,6,0.8)_72%,rgba(7,5,6,0.95)_100%)]" />
-                <div className="absolute inset-x-0 bottom-0 p-5">
-                  <p className="text-lg font-semibold text-ivory">{item.title}</p>
-                  <p className="mt-2 text-sm leading-6 text-mist/78">{item.caption}</p>
-                </div>
-              </div>
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,5,6,0)_38%,rgba(7,5,6,0.78)_78%,rgba(7,5,6,0.96)_100%)]" />
+                <div
+                  className="pointer-events-none absolute inset-x-6 top-5 h-px bg-gradient-to-r from-transparent via-champagne/55 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  aria-hidden
+                />
+                <figcaption className="absolute inset-x-0 bottom-0 p-5">
+                  <p className="font-serif text-lg leading-tight text-ivory">
+                    {item.title}
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-mist/82">{item.caption}</p>
+                </figcaption>
+              </figure>
             </Reveal>
           ))}
         </div>

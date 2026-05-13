@@ -29,21 +29,26 @@ export function ButtonLink({
       target={external ? "_blank" : undefined}
       rel={external ? "noreferrer" : undefined}
       className={cn(
-        "focus-ring group relative inline-flex items-center justify-center overflow-hidden rounded-full px-5 py-3 text-sm font-semibold transition duration-300 ease-out",
+        "focus-ring group relative inline-flex items-center justify-center overflow-hidden rounded-full px-5 py-3 text-sm font-semibold tracking-wide transition duration-300 ease-out",
         fullWidth && "w-full",
         variant === "primary" &&
-          "cta-ring border border-champagne/20 bg-[linear-gradient(135deg,#8f1d31_0%,#661726_55%,#421019_100%)] text-white hover:-translate-y-0.5 hover:shadow-glow",
+          "shimmer-on-hover cta-ring border border-champagne/25 bg-[linear-gradient(135deg,#9d2235_0%,#7a1a2d_45%,#4b121b_100%)] text-white hover:-translate-y-0.5",
         variant === "secondary" &&
-          "border border-white/12 bg-white/[0.045] text-ivory hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.07]",
+          "border border-white/14 bg-white/[0.05] text-ivory hover:-translate-y-0.5 hover:border-champagne/35 hover:bg-white/[0.08]",
         variant === "ghost" &&
-          "border border-white/8 bg-transparent text-mist/88 hover:-translate-y-0.5 hover:border-champagne/20 hover:bg-white/[0.045] hover:text-ivory",
+          "border border-white/8 bg-transparent text-mist/88 hover:-translate-y-0.5 hover:border-champagne/25 hover:bg-white/[0.045] hover:text-ivory",
         className,
       )}
     >
-      <span className="absolute inset-0 translate-y-full bg-[linear-gradient(180deg,rgba(255,255,255,0.12),transparent)] transition duration-300 group-hover:translate-y-0" />
       <span className="relative z-10 flex items-center gap-2">
         {icon ? <Icon name={icon} className="h-4 w-4" /> : null}
         <span>{children}</span>
+        {variant === "primary" ? (
+          <Icon
+            name="arrowRight"
+            className="h-3.5 w-3.5 -translate-x-0.5 opacity-70 transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-100"
+          />
+        ) : null}
       </span>
     </a>
   );

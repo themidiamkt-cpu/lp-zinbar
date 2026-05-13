@@ -71,9 +71,16 @@ type BusinessData = {
   neighborhood: string;
   city: string;
   state: string;
+  postalCode: string;
   addressLine: string;
   fullAddress: string;
+  telephone: string;
+  telephoneDisplay: string;
+  siteUrl: string;
+  foundingYear: number;
+  slogan: string;
   cuisine: string[];
+  geo: { latitude: number; longitude: number };
   maps: {
     directions: string;
     place: string;
@@ -88,9 +95,16 @@ const business: BusinessData = {
   neighborhood: "Taquaral",
   city: "Campinas",
   state: "SP",
+  postalCode: "13025-540",
   addressLine: "Rua Dr. Oswaldo Cruz, 586",
   fullAddress: "Rua Dr. Oswaldo Cruz, 586, Taquaral, Campinas - SP",
-  cuisine: ["Bares", "Cervejas", "Lanches", "Porções", "Pratos"],
+  telephone: "+55-19-99116-1095",
+  telephoneDisplay: "(19) 99116-1095",
+  siteUrl: "https://zinbar.com.br",
+  foundingYear: 2007,
+  slogan: "Bar e restaurante no Taquaral para almoço, jantar e happy hour em Campinas.",
+  cuisine: ["Culinária Brasileira", "Bar", "Drinks", "Porções", "Frutos do Mar", "Grelhados"],
+  geo: { latitude: -22.8952, longitude: -47.0488 },
   maps: {
     directions:
       "https://www.google.com/maps/dir/?api=1&destination=Rua%20Dr.%20Oswaldo%20Cruz%2C%20586%2C%20Taquaral%2C%20Campinas%20SP",
@@ -111,7 +125,7 @@ const actions = {
     external: true,
   },
   reservation: {
-    label: "Reservar mesa",
+    label: "Reservar agora",
     shortLabel: "Reservar",
     href: "https://zinbar.leadsfood.app/reservation",
     icon: "calendar",
@@ -129,10 +143,10 @@ const actions = {
   whatsapp: {
     label: "Falar no WhatsApp",
     shortLabel: "WhatsApp",
-    href: "#reserva",
+    href: "https://wa.me/5519991161095",
     icon: "whatsapp",
     variant: "ghost",
-    external: false,
+    external: true,
   },
 } satisfies Record<"directions" | "reservation" | "menu" | "whatsapp", ActionLink>;
 
@@ -140,60 +154,112 @@ export const landingData = {
   business,
   seo: {
     title:
-      "Zin Bar e Restaurante no Taquaral em Campinas/SP | Almoço, jantar e happy hour",
+      "Zin Bar e Restaurante | Taquaral, Campinas — Almoço, Jantar e Happy Hour desde 2007",
     description:
-      "Conheça o Zin Bar e Restaurante no Taquaral, Campinas: cervejas, lanches, porções e pratos em ambiente acolhedor com happy hour, almoço e jantar. Trace a rota, reserve sua mesa ou veja o cardápio.",
+      "Zin Bar e Restaurante no Taquaral, Campinas (SP). Há 19 anos servindo almoço, jantar e happy hour com drinks, porções e pratos. Reserva gratuita, estacionamento, kids e pet friendly. Avaliação 4.8 no Google com mais de 1.000 avaliações.",
     keywords: [
-      "restaurante no Taquaral",
-      "bar e restaurante em Campinas",
-      "restaurante perto de mim",
-      "restaurante aberto agora",
-      "bar aberto agora",
+      // Localização principal
+      "restaurante no Taquaral Campinas",
+      "bar e restaurante Taquaral",
+      "Zin Bar Campinas",
+      "Zin Bar Taquaral",
+      // Intenção de visita
+      "restaurante perto de mim Campinas",
+      "restaurante aberto agora Campinas",
+      "bar aberto agora Campinas",
+      "onde comer no Taquaral",
+      "onde comer em Campinas",
+      // Ocasião
       "happy hour Campinas",
-      "restaurante com espaço para família",
+      "happy hour Taquaral",
+      "restaurante para aniversário Campinas",
+      "restaurante para família Campinas",
+      "restaurante para encontro Campinas",
+      // Refeição
+      "almoço no Taquaral",
+      "jantar no Taquaral",
       "almoço e jantar Campinas",
+      // Diferenciais
+      "restaurante pet friendly Campinas",
+      "restaurante kids friendly Campinas",
+      "restaurante com estacionamento Campinas",
+      "restaurante com reserva online Campinas",
+      // Bairros próximos
+      "restaurante perto do Cambuí",
+      "restaurante perto do Guanabara",
+      "restaurante perto do Bosque",
     ],
     headings: [
-      "Restaurante e bar no Taquaral para almoço, jantar e happy hour em Campinas",
+      "Zin Bar e Restaurante no Taquaral, Campinas — almoço, jantar e happy hour",
       "Fácil de chegar, agradável de ficar",
-      "Drinks, porções e pratos para diferentes momentos",
+      "Drinks, porções e pratos para cada momento",
+      "Por que o Zin Bar é o restaurante certo no Taquaral?",
     ],
     localQueries: [
       "restaurante perto de mim",
       "restaurante aberto agora",
-      "bar aberto agora",
-      "restaurante no Taquaral",
+      "bar aberto agora Campinas",
+      "restaurante no Taquaral Campinas",
       "bar e restaurante em Campinas",
       "happy hour Campinas",
-      "restaurante com espaço para família",
+      "onde comer no Taquaral",
+      "restaurante com família Campinas",
+      "Zin Bar reserva",
+      "Zin Bar horários",
     ],
   },
   actions,
   hero: {
     overline: `${business.neighborhood}, ${business.city} • almoço, jantar e happy hour`,
     title:
-      "Zin Bar no Taquaral para almoço, jantar e happy hour com ambiente acolhedor em Campinas.",
+      "Zin Bar no Taquaral para almoço, jantar, happy hour e encontros que pedem uma casa cheia de clima certo.",
     subtitle:
-      "Cervejas, lanches, porções, pratos e drinks em uma casa descontraída, prática de chegar e confortável para família, amigos e encontros que pedem mais tempo à mesa.",
+      "Cervejas, drinks, porções e pratos em um ambiente acolhedor, com reserva gratuita, estacionamento com comodidade e uma presença local forte para decidir sem dúvida.",
     proofItems: [
       {
         icon: "star",
-        title: "Mais de 5 mil avaliações",
-        description: "Presença local forte e uma casa já conhecida por muita gente em Campinas.",
+        title: "+4.8 no Google",
+        description: "Com mais de 1.000 avaliações, reforçando a força local da casa.",
+      },
+      {
+        icon: "calendar",
+        title: "Reserva gratuita",
+        description: "Você garante a mesa sem custo e resolve rápido antes de sair.",
       },
       {
         icon: "mapPin",
-        title: business.addressLine,
-        description: `${business.neighborhood}, ${business.city}`,
-      },
-      {
-        icon: "family",
-        title: "Kids e pet friendly",
-        description: "Boa escolha para família, amigos e encontros sem complicação.",
+        title: "Estacionamento com comodidade",
+        description: "Mais praticidade para chegar, estacionar e aproveitar com calma.",
       },
     ] satisfies ProofItem[],
     supportingLine:
-      "Escolha prática para quem quer decidir rápido entre restaurante, bar aberto agora ou happy hour em Campinas sem cair em algo genérico.",
+      "Boa escolha para almoço, jantar, happy hour, aniversário e encontros com amigos sem sair da página com dúvidas.",
+  },
+  highlights: {
+    eyebrow: "Destaques da casa",
+    title: "Três motivos para o Zin Bar ser o seu próximo destino.",
+    description:
+      "Do aniversário ao happy hour, passando pela programação da semana — o Zin Bar tem sempre um bom motivo para você sair de casa.",
+    items: [
+      {
+        title: "Aniversariante ganha bolo",
+        description:
+          "Uma vantagem simples e clara para quem quer comemorar no Zin Bar com mais carinho e menos burocracia.",
+        icon: "party",
+      },
+      {
+        title: "Happy hour com promo",
+        description:
+          "Drinks, cervejas e porções em clima certo para estender o fim da tarde com mais vontade de ficar.",
+        icon: "glass",
+      },
+      {
+        title: "Agenda da semana",
+        description:
+          "Acompanhe a programação da casa, música ao vivo e novidades para escolher o melhor dia para ir.",
+        icon: "calendar",
+      },
+    ] satisfies IconFeatureItem[],
   },
   location: {
     eyebrow: "Localização",
@@ -253,70 +319,70 @@ export const landingData = {
   },
   gallery: {
     eyebrow: "Ambiente e pratos",
-    title: "Uma experiência visual forte antes mesmo do primeiro pedido.",
+    title: "Veja como é o Zin Bar antes de chegar.",
     description: "",
     items: [
       {
-        src: "/images/real/ambiente-sala.jpg",
-        alt: "Ambiente interno do Zin Bar com mesas e área de convivência",
-        title: "Ambiente da casa",
-        caption: "Um espaço descontraído para reunir amigos, família e prolongar a noite.",
+        src: "/images/real/ambiente-casa-cheia.jpg",
+        alt: "Ambiente do Zin Bar com a casa movimentada e clientes reunidos",
+        title: "A casa que fica boa à noite",
+        caption: "Ambiente animado, mesa boa e aquela energia de quem não quer ir embora cedo.",
         layout: "featured" as GalleryLayout,
       },
       {
-        src: "/images/real/prato-steak-chapa.jpg",
+        src: "/images/real/prato-steak-brasa.jpg",
         alt: "Corte servido na chapa no Zin Bar",
-        title: "Chapa quente",
-        caption: "Apresentação forte e serviço que chega à mesa com presença.",
+        title: "Na chapa, do jeito certo",
+        caption: "Carne bem selada, ponto certeiro e aquele cheiro que já convence antes de provar.",
         layout: "square" as GalleryLayout,
       },
       {
         src: "/images/real/prato-salmao-legumes.jpg",
         alt: "Prato com salmão, legumes e purê servido no Zin Bar",
-        title: "Pratos bem servidos",
-        caption: "Opções de almoço e jantar com leitura leve, boa montagem e sabor equilibrado.",
+        title: "Peixe fresco, prato completo",
+        caption: "Salmão com legumes e purê — leve, saboroso e bonito de chegar à mesa.",
         layout: "wide" as GalleryLayout,
       },
       {
         src: "/images/real/prato-parmegiana.jpg",
         alt: "Prato ao molho com arroz e fritas servido no Zin Bar",
-        title: "Clássicos da casa",
-        caption: "Pratos que funcionam bem no almoço e continuam convidativos no jantar.",
+        title: "O prato que sempre agrada",
+        caption: "Clássico da cozinha brasileira feito com capricho. Perfeito para o almoço ou jantar.",
         layout: "tall" as GalleryLayout,
       },
       {
         src: "/images/real/prato-salmao-risoto.jpg",
         alt: "Salmão com risoto servido no Zin Bar",
-        title: "Boa cozinha",
-        caption: "Pratos com acabamento caprichado para uma experiência mais completa à mesa.",
+        title: "Risoto cremoso com salmão",
+        caption: "Para quem quer uma refeição caprichada sem precisar de ocasião especial.",
         layout: "square" as GalleryLayout,
       },
       {
         src: "/images/real/prato-grelhado-arroz.jpg",
         alt: "Prato grelhado com arroz e acompanhamentos servido no Zin Bar",
-        title: "Escolhas do dia",
-        caption: "Uma vitrine honesta do que faz o cliente querer voltar mais de uma vez.",
+        title: "Grelhado que enche o prato",
+        caption: "Porção generosa, tempero no ponto e combinação que funciona toda vez.",
         layout: "square" as GalleryLayout,
       },
       {
         src: "/images/real/prato-strogonoff.jpg",
         alt: "Strogonoff com arroz e batata servido no Zin Bar",
-        title: "Conforto à mesa",
-        caption: "Pratos que equilibram sabor, boa porção e apelo visual para o almoço.",
+        title: "Strogonoff que lembra de casa",
+        caption: "Cremoso, bem temperado e com aquela porção que satisfaz de verdade.",
         layout: "square" as GalleryLayout,
       },
       {
         src: "/images/real/prato-corte-arroz.jpg",
         alt: "Corte grelhado com arroz e acompanhamentos servido no Zin Bar",
-        title: "Cortes grelhados",
-        caption: "Uma leitura mais robusta do cardápio para quem quer refeição completa.",
+        title: "Para quem veio com fome",
+        caption: "Corte grelhado com acompanhamentos fardos. Refeição completa, sem enrolação.",
         layout: "square" as GalleryLayout,
       },
       {
         src: "/images/real/prato-peixe-legumes.jpg",
         alt: "Prato de peixe com legumes servido no Zin Bar",
-        title: "Leveza e sabor",
-        caption: "Boas opções para quem busca um prato equilibrado sem abrir mão de presença.",
+        title: "Leve e saboroso",
+        caption: "Peixe no ponto com legumes frescos. Boa pedida para quem quer comer bem sem exagerar.",
         layout: "wide" as GalleryLayout,
       },
     ],
@@ -406,19 +472,20 @@ export const landingData = {
   // Atualize nota, volume de avaliações e depoimentos com dados reais antes de publicar.
   socialProof: {
     eyebrow: "Prova social",
-    title: "Quando o ambiente acerta, o encontro rende mais.",
+    title: "Autoridade local para decidir com mais segurança.",
     description:
-      "Quem escolhe o Zin Bar costuma destacar o equilíbrio entre ambiente acolhedor, conveniência no Taquaral e uma operação já conhecida por muita gente em Campinas.",
-    ratingLabel: "",
-    reviewsLabel: "Mais de 5 mil avaliações",
+      "A combinação entre ambiente, atendimento e presença no Taquaral ajuda o Zin Bar a se manter como uma escolha recorrente para almoço, jantar, happy hour e encontros especiais.",
+    ratingLabel: "+4.8",
+    reviewsLabel: "no Google com mais de 1.000 avaliações",
     ratingCaption:
-      "Presença consolidada na busca local e recorrência de clientes que já conhecem a casa.",
+      "Uma prova social forte para quem chegou por busca local e quer decidir rápido sem sensação de risco.",
     trustPoints: [
-      "Mais de 5 mil avaliações",
-      "Happy hour",
+      "+4.8 no Google",
+      "Mais de 1.000 avaliações",
+      "Happy hour com promo",
+      "Aniversariante ganha bolo",
       "Música ao vivo",
-      "Espaço confortável para família",
-      "Fácil de chegar",
+      "Família e amigos",
     ],
     testimonials: [
       {
@@ -442,11 +509,11 @@ export const landingData = {
     eyebrow: "Reserva e contato",
     title: "Reserve e resolva em poucos toques.",
     description:
-      "Se a ideia é sair sem perder tempo, aqui você consegue abrir a rota, reservar a mesa, conferir o cardápio e falar com a casa em poucos toques.",
+      "Se a ideia é sair sem perder tempo, aqui você consegue reservar, abrir a rota, conferir o cardápio e resolver dúvidas rápidas antes de chegar.",
     notes: [
-      "Abra a rota e resolva o trajeto em segundos.",
-      "Reserve com antecedência para almoço, jantar ou comemorações.",
-      "Use o WhatsApp para confirmar detalhes e agilizar seu atendimento.",
+      "A reserva é gratuita.",
+      "Há estacionamento com comodidade para você.",
+      "Boa escolha para aniversários, encontros e mesas planejadas com antecedência.",
     ],
   },
   hoursSection: {
@@ -548,12 +615,50 @@ export const landingData = {
       {
         question: "Como faço para reservar mesa?",
         answer:
-          "Você pode usar o botão de reserva para agilizar o contato com a casa e garantir sua mesa para almoço, jantar ou uma ocasião especial.",
+          "Você pode usar o botão de reserva para agilizar o contato com a casa e garantir sua mesa para almoço, jantar, happy hour ou uma ocasião especial.",
+      },
+      {
+        question: "Precisa pagar para reservar?",
+        answer: "Não. A reserva no Zin Bar é gratuita.",
+      },
+      {
+        question: "Tem estacionamento?",
+        answer: "Sim. O Zin Bar conta com estacionamento para trazer mais comodidade para você.",
+      },
+      {
+        question: "Posso comemorar aniversário?",
+        answer:
+          "Sim. O Zin Bar recebe comemorações e o aniversariante conta com benefícios especiais, incluindo bolo.",
       },
       {
         question: "Onde vejo o cardápio do Zin Bar?",
         answer:
           "O botão de cardápio leva direto para o cardápio online do Zin Bar, onde você pode conferir as opções atualizadas da casa.",
+      },
+      {
+        question: "Qual o telefone do Zin Bar e Restaurante?",
+        answer:
+          "Você pode entrar em contato com o Zin Bar pelo WhatsApp (19) 99116-1095 ou pelo botão de contato na página para tirar dúvidas rapidamente.",
+      },
+      {
+        question: "O Zin Bar tem música ao vivo?",
+        answer:
+          "Sim. O Zin Bar tem programação de música ao vivo em datas específicas da semana. Acompanhe a agenda da casa para saber os dias e artistas confirmados.",
+      },
+      {
+        question: "O Zin Bar fica em qual bairro de Campinas?",
+        answer:
+          "O Zin Bar e Restaurante fica no bairro Taquaral, em Campinas (SP), na Rua Dr. Oswaldo Cruz, 586. É de fácil acesso para quem vem do Cambuí, Guanabara, Bosque e regiões próximas.",
+      },
+      {
+        question: "Há quanto tempo o Zin Bar existe?",
+        answer:
+          "O Zin Bar e Restaurante foi fundado em 2007 e está há mais de 19 anos presente no Taquaral, em Campinas, consolidando uma trajetória de tradição, bom atendimento e presença local forte.",
+      },
+      {
+        question: "Qual a nota do Zin Bar no Google?",
+        answer:
+          "O Zin Bar e Restaurante tem avaliação de mais de 4.8 estrelas no Google, com mais de 1.000 avaliações de clientes — um dos indicadores de qualidade mais fortes para restaurantes em Campinas.",
       },
     ],
   },
@@ -562,7 +667,7 @@ export const landingData = {
     title:
       "Se a ideia é encontrar um restaurante no Taquaral com boa atmosfera, comida bem pensada e chegada fácil, o próximo passo é simples.",
     description:
-      "Abra a rota, reserve sua mesa ou confira o cardápio e escolha o melhor momento para viver a experiência do Zin Bar.",
+      "Reserve agora, abra a rota ou confira o cardápio e escolha o melhor momento para viver a experiência do Zin Bar.",
   },
   footer: {
     usefulLinks: [

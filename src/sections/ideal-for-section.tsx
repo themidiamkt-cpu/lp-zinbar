@@ -15,19 +15,26 @@ export function IdealForSection() {
             eyebrow={idealFor.eyebrow}
             title={idealFor.title}
             description={idealFor.description}
+            align="center"
           />
         </Reveal>
 
-        <div className="mt-10 flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 xl:grid-cols-5 xl:overflow-visible">
+        <div className="pretty-scroll mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 sm:grid sm:grid-cols-2 sm:overflow-visible md:grid-cols-3 xl:grid-cols-5">
           {idealFor.items.map((item, index) => (
-            <Reveal key={item.title} delay={index * 70} className="min-w-[272px] md:min-w-0">
-              <div className="premium-panel h-full p-6 transition duration-300 hover:-translate-y-1 hover:border-champagne/18">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05] text-champagne">
+            <Reveal
+              key={item.title}
+              delay={index * 70}
+              className="min-w-[260px] snap-start sm:min-w-0"
+            >
+              <article className="premium-panel card-hover relative h-full overflow-hidden p-6 text-left">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-champagne/20 bg-champagne/10 text-champagne">
                   <Icon name={item.icon} />
                 </div>
-                <h3 className="mt-5 text-xl font-semibold text-ivory">{item.title}</h3>
+                <h3 className="mt-5 font-serif text-lg leading-tight text-ivory">
+                  {item.title}
+                </h3>
                 <p className="mt-3 text-sm leading-7 text-mist/76">{item.description}</p>
-              </div>
+              </article>
             </Reveal>
           ))}
         </div>
@@ -35,4 +42,3 @@ export function IdealForSection() {
     </section>
   );
 }
-
