@@ -239,24 +239,24 @@ export const landingData = {
     eyebrow: "Destaques da casa",
     title: "Três motivos para o Zin Bar ser o seu próximo destino.",
     description:
-      "Do aniversário ao happy hour, passando pela programação da semana — o Zin Bar tem sempre um bom motivo para você sair de casa.",
+      "Quem conhece o Zin sempre encontra um motivo para voltar. Seja para comemorar, relaxar depois do trabalho ou curtir a programação da semana, o Zin sempre entrega a experiência certa.",
     items: [
       {
         title: "Aniversariante ganha bolo",
         description:
-          "Uma vantagem simples e clara para quem quer comemorar no Zin Bar com mais carinho e menos burocracia.",
+          "Mesa reservada, decoração permitida e bolo cortesia para grupos elegíveis.",
         icon: "party",
       },
       {
-        title: "Happy hour com promo",
+        title: "Drinks em dobro e clima para ficar",
         description:
-          "Drinks, cervejas e porções em clima certo para estender o fim da tarde com mais vontade de ficar.",
+          "Drinks, cervejas e porções em um ambiente perfeito para desacelerar e aproveitar.",
         icon: "glass",
       },
       {
-        title: "Agenda da semana",
+        title: "Música e experiências durante a semana",
         description:
-          "Acompanhe a programação da casa, música ao vivo e novidades para escolher o melhor dia para ir.",
+          "Música ao vivo, eventos e novidades para você escolher quando viver sua próxima experiência no Zin.",
         icon: "calendar",
       },
     ] satisfies IconFeatureItem[],
