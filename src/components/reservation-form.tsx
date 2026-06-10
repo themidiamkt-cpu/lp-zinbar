@@ -83,7 +83,7 @@ export function ReservationForm() {
               required
               autoComplete="name"
               placeholder="Seu nome"
-              className="mt-2 w-full rounded-2xl border border-white/10 bg-black/24 px-4 py-3 text-sm text-ivory outline-none transition placeholder:text-mist/38 focus:border-champagne/45 focus:bg-black/32"
+              className="mt-2 w-full rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm text-ink outline-none transition placeholder:text-slate focus:border-champagne/45 focus:bg-white"
             />
           </label>
 
@@ -98,7 +98,7 @@ export function ReservationForm() {
               autoComplete="tel"
               inputMode="tel"
               placeholder="(19) 99999-9999"
-              className="mt-2 w-full rounded-2xl border border-white/10 bg-black/24 px-4 py-3 text-sm text-ivory outline-none transition placeholder:text-mist/38 focus:border-champagne/45 focus:bg-black/32"
+              className="mt-2 w-full rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm text-ink outline-none transition placeholder:text-slate focus:border-champagne/45 focus:bg-white"
             />
           </label>
 
@@ -110,7 +110,7 @@ export function ReservationForm() {
               name="date"
               type="date"
               required
-              className="mt-2 w-full rounded-2xl border border-white/10 bg-black/24 px-4 py-3 text-sm text-ivory outline-none transition [color-scheme:dark] focus:border-champagne/45 focus:bg-black/32"
+              className="mt-2 w-full rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm text-ink outline-none transition [color-scheme:light] focus:border-champagne/45 focus:bg-white"
             />
           </label>
 
@@ -122,7 +122,7 @@ export function ReservationForm() {
               name="time"
               type="time"
               required
-              className="mt-2 w-full rounded-2xl border border-white/10 bg-black/24 px-4 py-3 text-sm text-ivory outline-none transition [color-scheme:dark] focus:border-champagne/45 focus:bg-black/32"
+              className="mt-2 w-full rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm text-ink outline-none transition [color-scheme:light] focus:border-champagne/45 focus:bg-white"
             />
           </label>
 
@@ -138,7 +138,7 @@ export function ReservationForm() {
               required
               inputMode="numeric"
               placeholder="Ex: 4"
-              className="mt-2 w-full rounded-2xl border border-white/10 bg-black/24 px-4 py-3 text-sm text-ivory outline-none transition placeholder:text-mist/38 focus:border-champagne/45 focus:bg-black/32"
+              className="mt-2 w-full rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm text-ink outline-none transition placeholder:text-slate focus:border-champagne/45 focus:bg-white"
             />
           </label>
         </div>
