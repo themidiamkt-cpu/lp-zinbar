@@ -102,6 +102,20 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=GT-K4VMWM3H"
+          strategy="afterInteractive"
+        />
+        <Script id="google-tag" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'GT-K4VMWM3H');
+            gtag('config', 'G-4E948Z465V');
+            gtag('config', 'AW-17541854706');
+          `}
+        </Script>
         <Script id="meta-pixel" strategy="afterInteractive">
           {`
             !function(f,b,e,v,n,t,s)

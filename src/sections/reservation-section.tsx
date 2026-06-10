@@ -2,9 +2,9 @@ import { ButtonLink } from "@/components/button-link";
 import { Container } from "@/components/container";
 import { Icon } from "@/components/icons";
 import { Reveal } from "@/components/reveal";
+import { ReservationForm } from "@/components/reservation-form";
 import { SectionHeading } from "@/components/section-heading";
 import { landingData } from "@/data/landing-data";
-import { cn } from "@/utils/cn";
 
 const { actions, reservation } = landingData;
 
@@ -14,13 +14,6 @@ const actionCards = [
     description:
       "Abra o mapa e reduza a fricção de quem já quer sair de casa ou do trabalho.",
     action: actions.directions,
-  },
-  {
-    title: "Reservar agora",
-    description:
-      "Facilite a decisão de grupos, famílias e encontros marcados com antecedência sem custo de reserva.",
-    action: actions.reservation,
-    featured: true,
   },
   {
     title: "Ver cardápio",
@@ -73,52 +66,40 @@ export function ReservationSection() {
               </ul>
             </Reveal>
 
-            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
-              {actionCards.map((item, index) => (
-                <Reveal key={item.title} delay={index * 70}>
-                  <article
-                    className={cn(
-                      "card-hover relative h-full overflow-hidden rounded-[26px] p-6",
-                      item.featured
-                        ? "border border-champagne/30 bg-[linear-gradient(180deg,rgba(143,29,49,0.32),rgba(7,5,6,0.7))] shadow-glow"
-                        : "border border-white/10 bg-black/15",
-                    )}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div
-                        className={cn(
-                          "flex h-11 w-11 items-center justify-center rounded-2xl border text-champagne",
-                          item.featured
-                            ? "border-champagne/30 bg-champagne/12"
-                            : "border-white/10 bg-white/[0.05]",
-                        )}
-                      >
-                        <Icon name={item.action.icon} />
+            <div className="grid gap-4">
+              <Reveal delay={80}>
+                <ReservationForm />
+              </Reveal>
+
+              <div className="grid gap-3 sm:grid-cols-3">
+                {actionCards.map((item, index) => (
+                  <Reveal key={item.title} delay={index * 70 + 140}>
+                    <article className="card-hover relative h-full overflow-hidden rounded-[24px] border border-white/10 bg-black/15 p-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05] text-champagne">
+                        <Icon name={item.action.icon} className="h-4 w-4" />
                       </div>
-                      {item.featured ? (
-                        <span className="rounded-full border border-champagne/30 bg-black/40 px-2 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.24em] text-champagne">
-                          Recomendado
-                        </span>
-                      ) : null}
-                    </div>
-                    <h3 className="mt-5 font-serif text-xl leading-tight text-ivory">
-                      {item.title}
-                    </h3>
-                    <p className="mt-3 text-sm leading-7 text-mist/78">{item.description}</p>
-                    <div className="mt-5">
-                      <ButtonLink
-                        href={item.action.href}
-                        icon={item.action.icon}
-                        external={item.action.external}
-                        variant={item.action.variant}
-                        fullWidth
-                      >
-                        {item.action.label}
-                      </ButtonLink>
-                    </div>
-                  </article>
-                </Reveal>
-              ))}
+                      <h3 className="mt-4 font-serif text-lg leading-tight text-ivory">
+                        {item.title}
+                      </h3>
+                      <p className="mt-2 text-xs leading-6 text-mist/76">
+                        {item.description}
+                      </p>
+                      <div className="mt-4">
+                        <ButtonLink
+                          href={item.action.href}
+                          icon={item.action.icon}
+                          external={item.action.external}
+                          variant={item.action.variant}
+                          fullWidth
+                          className="px-3 text-xs"
+                        >
+                          {item.action.shortLabel}
+                        </ButtonLink>
+                      </div>
+                    </article>
+                  </Reveal>
+                ))}
+              </div>
             </div>
           </div>
         </div>

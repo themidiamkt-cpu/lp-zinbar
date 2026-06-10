@@ -127,10 +127,10 @@ const actions = {
   reservation: {
     label: "Reservar agora",
     shortLabel: "Reservar",
-    href: "https://zinbar.leadsfood.app/reservation",
+    href: "#reserva",
     icon: "calendar",
     variant: "secondary",
-    external: true,
+    external: false,
   },
   menu: {
     label: "Ver cardápio",
