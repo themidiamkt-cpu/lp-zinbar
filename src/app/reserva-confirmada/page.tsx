@@ -28,6 +28,16 @@ export default function ReservationConfirmedPage() {
           });
         `}
       </Script>
+      <Script id="meta-reservation-lead" strategy="afterInteractive">
+        {`
+          if (typeof fbq === 'function') {
+            fbq('track', 'Lead', {
+              content_name: 'Reserva enviada',
+              content_category: 'Reserva'
+            });
+          }
+        `}
+      </Script>
       <main className="min-h-screen bg-ink px-4 py-8 text-ivory sm:px-6">
         <Container className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
           <section className="premium-panel-strong relative w-full max-w-3xl overflow-hidden p-6 text-center sm:p-10 lg:p-12">
