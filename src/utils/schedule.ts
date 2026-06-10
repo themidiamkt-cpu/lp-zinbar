@@ -15,6 +15,46 @@ function parseTime(time: string) {
   return hour * 60 + minute;
 }
 
+function formatTime(minutes: number) {
+  const hour = Math.floor(minutes / 60);
+  const minute = minutes % 60;
+  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+}
+
+function getDayKeyFromDate(date: string): DayKey | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return null;
+  }
+
+  const dayIndex = new Date(`${date}T12:00:00Z`).getUTCDay();
+  const dayMap: DayKey[] = [
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+  ];
+
+  return dayMap[dayIndex] ?? null;
+}
+
+function getDateStringInTimeZone(timeZone: string) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+
+  const year = parts.find((part) => part.type === "year")?.value;
+  const month = parts.find((part) => part.type === "month")?.value;
+  const day = parts.find((part) => part.type === "day")?.value;
+
+  return `${year}-${month}-${day}`;
+}
+
 function getNowParts(timeZone: string) {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone,
@@ -123,3 +163,59 @@ export function getTodaySchedule(week: WeeklySchedule, timeZone: string): Schedu
   return week[todayIndex] ?? week[0];
 }
 
+export function getReservationDateMin(timeZone: string) {
+  return getDateStringInTimeZone(timeZone);
+}
+
+export function getReservationDay(week: WeeklySchedule, date: string) {
+  const dayKey = getDayKeyFromDate(date);
+  return dayKey ? week.find((day) => day.key === dayKey) : undefined;
+}
+
+export function getReservationTimeOptions(
+  week: WeeklySchedule,
+  date: string,
+  timeZone: string,
+  intervalMinutes = 30,
+) {
+  const day = getReservationDay(week, date);
+
+  if (!day?.periods.length) {
+    return [];
+  }
+
+  const today = getDateStringInTimeZone(timeZone);
+  const now = getNowParts(timeZone);
+  const minMinutes = date === today ? now.minutes + intervalMinutes : 0;
+
+  return day.periods.flatMap((period) => {
+    const opens = parseTime(period.opens);
+    const closes = parseTime(period.closes);
+    const firstSlot = Math.max(opens, Math.ceil(minMinutes / intervalMinutes) * intervalMinutes);
+    const options: string[] = [];
+
+    for (let minutes = firstSlot; minutes < closes; minutes += intervalMinutes) {
+      options.push(formatTime(minutes));
+    }
+
+    return options;
+  });
+}
+
+export function isReservationSlotAvailable(
+  week: WeeklySchedule,
+  date: string,
+  time: string,
+  timeZone: string,
+) {
+  if (!/^\d{2}:\d{2}$/.test(time)) {
+    return false;
+  }
+
+  if (date < getDateStringInTimeZone(timeZone)) {
+    return false;
+  }
+
+  const options = getReservationTimeOptions(week, date, timeZone);
+  return options.includes(time);
+}

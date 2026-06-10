@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 
+import { landingData } from "@/data/landing-data";
+import { isReservationSlotAvailable } from "@/utils/schedule";
+
 const WEBHOOK_URL = "https://automacao2.themidiamarketing.com.br/webhook/zin-reservas";
+const { schedule } = landingData;
 
 type ReservationPayload = {
   name?: string;
@@ -34,6 +38,10 @@ export async function POST(request: Request) {
 
   if (!name || !whatsapp || !date || !time || !Number.isFinite(guests) || guests < 1) {
     return NextResponse.json({ error: "Missing reservation fields" }, { status: 400 });
+  }
+
+  if (!isReservationSlotAvailable(schedule.week, date, time, schedule.timezone)) {
+    return NextResponse.json({ error: "Reservation time unavailable" }, { status: 400 });
   }
 
   const webhookPayload = {

@@ -4,12 +4,22 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Icon } from "@/components/icons";
+import { landingData } from "@/data/landing-data";
+import { getReservationDateMin, getReservationTimeOptions } from "@/utils/schedule";
 
 type SubmitState = "idle" | "submitting" | "error";
+
+const { schedule } = landingData;
+const minReservationDate = getReservationDateMin(schedule.timezone);
 
 export function ReservationForm() {
   const router = useRouter();
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
+  const [selectedDate, setSelectedDate] = useState("");
+
+  const timeOptions = selectedDate
+    ? getReservationTimeOptions(schedule.week, selectedDate, schedule.timezone)
+    : [];
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -110,6 +120,9 @@ export function ReservationForm() {
               name="date"
               type="date"
               required
+              min={minReservationDate}
+              value={selectedDate}
+              onChange={(event) => setSelectedDate(event.target.value)}
               className="mt-2 w-full rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm text-ink outline-none transition [color-scheme:light] focus:border-champagne/45 focus:bg-white"
             />
           </label>
@@ -118,12 +131,25 @@ export function ReservationForm() {
             <span className="text-xs font-semibold uppercase tracking-[0.18em] text-mist/68">
               Horário
             </span>
-            <input
+            <select
               name="time"
-              type="time"
               required
-              className="mt-2 w-full rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm text-ink outline-none transition [color-scheme:light] focus:border-champagne/45 focus:bg-white"
-            />
+              disabled={!selectedDate || !timeOptions.length}
+              className="mt-2 w-full rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm text-ink outline-none transition [color-scheme:light] focus:border-champagne/45 focus:bg-white disabled:cursor-not-allowed disabled:bg-white/70 disabled:text-slate"
+            >
+              <option value="">
+                {!selectedDate
+                  ? "Escolha a data"
+                  : timeOptions.length
+                    ? "Escolha o horário"
+                    : "Fechado nessa data"}
+              </option>
+              {timeOptions.map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
           </label>
 
           <label className="sm:col-span-2">
