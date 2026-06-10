@@ -16,10 +16,12 @@ export function ReservationForm() {
   const router = useRouter();
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [selectedDate, setSelectedDate] = useState("");
+  const [guestCount, setGuestCount] = useState("");
 
   const timeOptions = selectedDate
     ? getReservationTimeOptions(schedule.week, selectedDate, schedule.timezone)
     : [];
+  const requiresPixGuarantee = Number(guestCount) > 20;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -35,6 +37,8 @@ export function ReservationForm() {
       date: String(formData.get("date") ?? ""),
       time: String(formData.get("time") ?? ""),
       guests: Number(formData.get("guests") ?? 0),
+      pixGuaranteeRequired: Number(formData.get("guests") ?? 0) > 20,
+      pixGuaranteeAcknowledged: formData.get("pixGuaranteeAcknowledged") === "on",
       pageUrl: window.location.href,
       referrer: document.referrer,
       utmSource: params.get("utm_source"),
@@ -163,11 +167,34 @@ export function ReservationForm() {
               max="80"
               required
               inputMode="numeric"
+              value={guestCount}
+              onChange={(event) => setGuestCount(event.target.value)}
               placeholder="Ex: 4"
               className="mt-2 w-full rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm text-ink outline-none transition placeholder:text-slate focus:border-champagne/45 focus:bg-white"
             />
           </label>
         </div>
+
+        {requiresPixGuarantee ? (
+          <div className="mt-4 rounded-2xl border border-champagne/30 bg-champagne/10 p-4 text-sm leading-6 text-mist/88">
+            <p className="font-semibold text-ivory">
+              Reservas acima de 20 pessoas precisam de Pix de garantia.
+            </p>
+            <p className="mt-1">
+              A equipe do Zin Bar vai enviar os dados do Pix pelo WhatsApp para confirmar
+              a reserva do grupo.
+            </p>
+            <label className="mt-3 flex items-start gap-3 text-mist/86">
+              <input
+                name="pixGuaranteeAcknowledged"
+                type="checkbox"
+                required={requiresPixGuarantee}
+                className="mt-1 h-4 w-4 rounded border-white/20 accent-champagne"
+              />
+              <span>Estou ciente de que será necessário fazer um Pix de garantia.</span>
+            </label>
+          </div>
+        ) : null}
 
         {submitState === "error" ? (
           <p className="mt-4 rounded-2xl border border-red-300/20 bg-red-500/10 px-4 py-3 text-sm leading-6 text-red-100">

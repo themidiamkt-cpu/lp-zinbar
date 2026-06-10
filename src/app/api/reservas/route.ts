@@ -12,6 +12,8 @@ type ReservationPayload = {
   date?: string;
   time?: string;
   guests?: number;
+  pixGuaranteeRequired?: boolean;
+  pixGuaranteeAcknowledged?: boolean;
   pageUrl?: string;
   referrer?: string;
   utmSource?: string | null;
@@ -44,6 +46,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Reservation time unavailable" }, { status: 400 });
   }
 
+  const pixGuaranteeRequired = guests > 20;
+
+  if (pixGuaranteeRequired && !payload.pixGuaranteeAcknowledged) {
+    return NextResponse.json({ error: "Pix guarantee acknowledgement required" }, { status: 400 });
+  }
+
   const webhookPayload = {
     event: "reservation_request",
     source: "zinbar.com.br",
@@ -54,6 +62,8 @@ export async function POST(request: Request) {
       date,
       time,
       guests,
+      pixGuaranteeRequired,
+      pixGuaranteeAcknowledged: pixGuaranteeRequired ? true : Boolean(payload.pixGuaranteeAcknowledged),
     },
     tracking: {
       pageUrl: payload.pageUrl,
