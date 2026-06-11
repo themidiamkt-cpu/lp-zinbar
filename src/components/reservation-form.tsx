@@ -5,39 +5,80 @@ import { useRouter } from "next/navigation";
 
 import { Icon } from "@/components/icons";
 import { landingData } from "@/data/landing-data";
-import { getReservationDateMin, getReservationTimeOptions } from "@/utils/schedule";
+import type { ReservationMode } from "@/data/landing-data";
+import {
+  getReservationDateMin,
+  getReservationTimeOptions,
+  hasSameDayReservationCutoffPassed,
+} from "@/utils/schedule";
 
 type SubmitState = "idle" | "submitting" | "error";
 
-const { schedule } = landingData;
+const { reservation, schedule } = landingData;
 const minReservationDate = getReservationDateMin(schedule.timezone);
+
+function getReservationErrorMessage(error: string) {
+  switch (error) {
+    case "Same-day reservations unavailable after 19:30":
+      return `As reservas para o mesmo dia ficam disponíveis até ${reservation.sameDayCutoffTime}. Escolha outra data ou fale com a casa pelo WhatsApp.`;
+    case "Pix guarantee acknowledgement required":
+      return "Confirme no formulário que você está ciente do Pix necessário para seguir com essa reserva.";
+    case "Billiards already reserved for this night":
+      return "O bilhar já está reservado para essa noite. Escolha outra data ou fale com a casa pelo WhatsApp.";
+    case "Reservation time unavailable":
+      return "Esse horário não está mais disponível. Escolha outro horário para continuar.";
+    default:
+      return "Não conseguimos enviar sua reserva agora. Tente novamente em alguns segundos.";
+  }
+}
 
 export function ReservationForm() {
   const router = useRouter();
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
+  const [submitError, setSubmitError] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [guestCount, setGuestCount] = useState("");
+  const [reservationType, setReservationType] = useState<ReservationMode>("table");
 
   const timeOptions = selectedDate
-    ? getReservationTimeOptions(schedule.week, selectedDate, schedule.timezone)
+    ? getReservationTimeOptions(
+        schedule.week,
+        selectedDate,
+        schedule.timezone,
+        30,
+        reservation.sameDayCutoffTime,
+      )
     : [];
-  const requiresPixGuarantee = Number(guestCount) > 20;
+  const sameDayCutoffReached = selectedDate
+    ? hasSameDayReservationCutoffPassed(
+        selectedDate,
+        schedule.timezone,
+        reservation.sameDayCutoffTime,
+      )
+    : false;
+  const requiresPixGuarantee =
+    Number(guestCount) > 20 || reservationType === "billiards";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitState("submitting");
+    setSubmitError("");
 
     const form = event.currentTarget;
     const formData = new FormData(form);
     const params = new URLSearchParams(window.location.search);
+    const formReservationType =
+      formData.get("reservationType") === "billiards" ? "billiards" : "table";
 
     const payload = {
       name: String(formData.get("name") ?? "").trim(),
       whatsapp: String(formData.get("whatsapp") ?? "").trim(),
+      reservationType: formReservationType,
       date: String(formData.get("date") ?? ""),
       time: String(formData.get("time") ?? ""),
       guests: Number(formData.get("guests") ?? 0),
-      pixGuaranteeRequired: Number(formData.get("guests") ?? 0) > 20,
+      pixGuaranteeRequired:
+        Number(formData.get("guests") ?? 0) > 20 || formReservationType === "billiards",
       pixGuaranteeAcknowledged: formData.get("pixGuaranteeAcknowledged") === "on",
       pageUrl: window.location.href,
       referrer: document.referrer,
@@ -56,11 +97,17 @@ export function ReservationForm() {
       });
 
       if (!response.ok) {
-        throw new Error("Reservation request failed");
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error ?? "Reservation request failed");
       }
 
       router.push("/reserva-confirmada");
-    } catch {
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? getReservationErrorMessage(error.message)
+          : getReservationErrorMessage("Reservation request failed"),
+      );
       setSubmitState("error");
     }
   }
@@ -87,6 +134,29 @@ export function ReservationForm() {
         </div>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <label className="sm:col-span-2">
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-mist/68">
+              Tipo de reserva
+            </span>
+            <select
+              name="reservationType"
+              value={reservationType}
+              onChange={(event) => setReservationType(event.target.value as ReservationMode)}
+              className="mt-2 w-full rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm text-ink outline-none transition [color-scheme:light] focus:border-champagne/45 focus:bg-white"
+            >
+              {reservation.modes.map((mode) => (
+                <option key={mode.value} value={mode.value}>
+                  {mode.label}
+                </option>
+              ))}
+            </select>
+            <p className="mt-2 text-xs leading-6 text-mist/68">
+              {
+                reservation.modes.find((mode) => mode.value === reservationType)?.description
+              }
+            </p>
+          </label>
+
           <label className="sm:col-span-2">
             <span className="text-xs font-semibold uppercase tracking-[0.18em] text-mist/68">
               Nome
@@ -175,14 +245,24 @@ export function ReservationForm() {
           </label>
         </div>
 
+        {sameDayCutoffReached ? (
+          <div className="mt-4 rounded-2xl border border-red-300/20 bg-red-500/10 p-4 text-sm leading-6 text-red-100">
+            As reservas para hoje encerram às {reservation.sameDayCutoffTime}. Escolha outra
+            data ou fale com a casa pelo WhatsApp.
+          </div>
+        ) : null}
+
         {requiresPixGuarantee ? (
           <div className="mt-4 rounded-2xl border border-champagne/30 bg-champagne/10 p-4 text-sm leading-6 text-mist/88">
             <p className="font-semibold text-ivory">
-              Reservas acima de 20 pessoas precisam de Pix de garantia.
+              {reservationType === "billiards"
+                ? "A reserva do bilhar exige Pix antecipado para confirmação."
+                : "Reservas acima de 20 pessoas precisam de Pix de garantia."}
             </p>
             <p className="mt-1">
-              A equipe do Zin Bar vai enviar os dados do Pix pelo WhatsApp para confirmar
-              a reserva do grupo.
+              {reservationType === "billiards"
+                ? "Só pode existir uma reserva de bilhar por noite. A equipe vai validar a disponibilidade e enviar os dados do Pix pelo WhatsApp para concluir a confirmação."
+                : "A equipe do Zin Bar vai enviar os dados do Pix pelo WhatsApp para confirmar a reserva do grupo."}
             </p>
             <label className="mt-3 flex items-start gap-3 text-mist/86">
               <input
@@ -191,14 +271,17 @@ export function ReservationForm() {
                 required={requiresPixGuarantee}
                 className="mt-1 h-4 w-4 rounded border-white/20 accent-champagne"
               />
-              <span>Estou ciente de que será necessário fazer um Pix de garantia.</span>
+              <span>
+                Estou ciente de que será necessário fazer um Pix para essa reserva seguir para
+                confirmação.
+              </span>
             </label>
           </div>
         ) : null}
 
         {submitState === "error" ? (
           <p className="mt-4 rounded-2xl border border-red-300/20 bg-red-500/10 px-4 py-3 text-sm leading-6 text-red-100">
-            Não conseguimos enviar sua reserva agora. Tente novamente em alguns segundos.
+            {submitError}
           </p>
         ) : null}
 

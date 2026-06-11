@@ -55,6 +55,10 @@ function getDateStringInTimeZone(timeZone: string) {
   return `${year}-${month}-${day}`;
 }
 
+export function getCurrentDateInTimeZone(timeZone: string) {
+  return getDateStringInTimeZone(timeZone);
+}
+
 function getNowParts(timeZone: string) {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone,
@@ -72,6 +76,10 @@ function getNowParts(timeZone: string) {
     weekday,
     minutes: hour * 60 + minute,
   };
+}
+
+export function getCurrentTimeInMinutes(timeZone: string) {
+  return getNowParts(timeZone).minutes;
 }
 
 export function formatPeriods(periods: SchedulePeriod[]) {
@@ -177,6 +185,7 @@ export function getReservationTimeOptions(
   date: string,
   timeZone: string,
   intervalMinutes = 30,
+  sameDayCutoffTime?: string,
 ) {
   const day = getReservationDay(week, date);
 
@@ -186,6 +195,15 @@ export function getReservationTimeOptions(
 
   const today = getDateStringInTimeZone(timeZone);
   const now = getNowParts(timeZone);
+
+  if (
+    sameDayCutoffTime &&
+    date === today &&
+    now.minutes >= parseTime(sameDayCutoffTime)
+  ) {
+    return [];
+  }
+
   const minMinutes = date === today ? now.minutes + intervalMinutes : 0;
 
   return day.periods.flatMap((period) => {
@@ -207,6 +225,7 @@ export function isReservationSlotAvailable(
   date: string,
   time: string,
   timeZone: string,
+  sameDayCutoffTime?: string,
 ) {
   if (!/^\d{2}:\d{2}$/.test(time)) {
     return false;
@@ -216,6 +235,23 @@ export function isReservationSlotAvailable(
     return false;
   }
 
-  const options = getReservationTimeOptions(week, date, timeZone);
+  const options = getReservationTimeOptions(
+    week,
+    date,
+    timeZone,
+    30,
+    sameDayCutoffTime,
+  );
   return options.includes(time);
+}
+
+export function hasSameDayReservationCutoffPassed(
+  date: string,
+  timeZone: string,
+  sameDayCutoffTime: string,
+) {
+  return (
+    date === getDateStringInTimeZone(timeZone) &&
+    getNowParts(timeZone).minutes >= parseTime(sameDayCutoffTime)
+  );
 }

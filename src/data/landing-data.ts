@@ -29,6 +29,7 @@ export type DayKey =
   | "sunday";
 
 export type ActionVariant = "primary" | "secondary" | "ghost";
+export type ReservationMode = "table" | "billiards";
 
 export type ActionLink = {
   label: string;
@@ -223,7 +224,7 @@ export const landingData = {
       },
       {
         icon: "calendar",
-        title: "Reserva gratuita",
+        title: "Reserva de mesa gratuita",
         description: "Você garante a mesa sem custo e resolve rápido antes de sair.",
       },
       {
@@ -511,9 +512,23 @@ export const landingData = {
     description:
       "Se a ideia é sair sem perder tempo, aqui você consegue reservar, abrir a rota, conferir o cardápio e resolver dúvidas rápidas antes de chegar.",
     notes: [
-      "A reserva é gratuita.",
+      "A reserva de mesa é gratuita.",
       "Há estacionamento com comodidade para você.",
-      "Boa escolha para aniversários, encontros e mesas planejadas com antecedência.",
+      "Reservas para o mesmo dia ficam disponíveis até 19:30.",
+      "A reserva do bilhar exige Pix antecipado e confirmação de disponibilidade da noite.",
+    ],
+    sameDayCutoffTime: "19:30",
+    modes: [
+      {
+        value: "table" as ReservationMode,
+        label: "Mesa",
+        description: "Reserva tradicional para almoço, jantar, happy hour e comemorações.",
+      },
+      {
+        value: "billiards" as ReservationMode,
+        label: "Bilhar",
+        description: "Só pode existir uma reserva por noite e a confirmação depende de Pix antecipado.",
+      },
     ],
   },
   hoursSection: {
@@ -619,11 +634,22 @@ export const landingData = {
       },
       {
         question: "Precisa pagar para reservar?",
-        answer: "Não. A reserva no Zin Bar é gratuita.",
+        answer:
+          "A reserva de mesa é gratuita. Já a reserva do bilhar exige Pix antecipado para seguir para confirmação.",
       },
       {
         question: "Tem estacionamento?",
         answer: "Sim. O Zin Bar conta com estacionamento para trazer mais comodidade para você.",
+      },
+      {
+        question: "Até que horas posso reservar no mesmo dia?",
+        answer:
+          "As reservas para o mesmo dia ficam disponíveis até 19:30. Depois desse horário, a equipe segue atendendo conforme disponibilidade da casa e pelo WhatsApp.",
+      },
+      {
+        question: "Como funciona a reserva do bilhar?",
+        answer:
+          "A reserva do bilhar depende de disponibilidade exclusiva para a noite escolhida. Só pode haver uma reserva por noite e a confirmação exige Pix antecipado.",
       },
       {
         question: "Posso comemorar aniversário?",
