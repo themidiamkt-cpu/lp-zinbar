@@ -185,7 +185,7 @@ export function getReservationTimeOptions(
   date: string,
   timeZone: string,
   intervalMinutes = 30,
-  sameDayCutoffTime?: string,
+  latestReservationTime?: string,
 ) {
   const day = getReservationDay(week, date);
 
@@ -195,16 +195,10 @@ export function getReservationTimeOptions(
 
   const today = getDateStringInTimeZone(timeZone);
   const now = getNowParts(timeZone);
-
-  if (
-    sameDayCutoffTime &&
-    date === today &&
-    now.minutes >= parseTime(sameDayCutoffTime)
-  ) {
-    return [];
-  }
-
   const minMinutes = date === today ? now.minutes + intervalMinutes : 0;
+  const latestReservationMinutes = latestReservationTime
+    ? parseTime(latestReservationTime)
+    : Number.POSITIVE_INFINITY;
 
   return day.periods.flatMap((period) => {
     const opens = parseTime(period.opens);
@@ -213,7 +207,9 @@ export function getReservationTimeOptions(
     const options: string[] = [];
 
     for (let minutes = firstSlot; minutes < closes; minutes += intervalMinutes) {
-      options.push(formatTime(minutes));
+      if (minutes <= latestReservationMinutes) {
+        options.push(formatTime(minutes));
+      }
     }
 
     return options;
@@ -225,7 +221,7 @@ export function isReservationSlotAvailable(
   date: string,
   time: string,
   timeZone: string,
-  sameDayCutoffTime?: string,
+  latestReservationTime?: string,
 ) {
   if (!/^\d{2}:\d{2}$/.test(time)) {
     return false;
@@ -240,18 +236,15 @@ export function isReservationSlotAvailable(
     date,
     timeZone,
     30,
-    sameDayCutoffTime,
+    latestReservationTime,
   );
   return options.includes(time);
 }
 
-export function hasSameDayReservationCutoffPassed(
-  date: string,
-  timeZone: string,
-  sameDayCutoffTime: string,
-) {
-  return (
-    date === getDateStringInTimeZone(timeZone) &&
-    getNowParts(timeZone).minutes >= parseTime(sameDayCutoffTime)
-  );
+export function isReservationTimeAfterLimit(time: string, latestReservationTime: string) {
+  if (!/^\d{2}:\d{2}$/.test(time)) {
+    return false;
+  }
+
+  return parseTime(time) > parseTime(latestReservationTime);
 }

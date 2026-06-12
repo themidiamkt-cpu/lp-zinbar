@@ -9,7 +9,6 @@ import type { ReservationMode } from "@/data/landing-data";
 import {
   getReservationDateMin,
   getReservationTimeOptions,
-  hasSameDayReservationCutoffPassed,
 } from "@/utils/schedule";
 
 type SubmitState = "idle" | "submitting" | "error";
@@ -19,8 +18,8 @@ const minReservationDate = getReservationDateMin(schedule.timezone);
 
 function getReservationErrorMessage(error: string) {
   switch (error) {
-    case "Same-day reservations unavailable after 19:30":
-      return `As reservas para o mesmo dia ficam disponíveis até ${reservation.sameDayCutoffTime}. Escolha outra data ou fale com a casa pelo WhatsApp.`;
+    case `Reservations are only available until ${reservation.sameDayCutoffTime}`:
+      return `Não aceitamos reservas para horários depois de ${reservation.sameDayCutoffTime}. Escolha um horário até esse limite.`;
     case "Pix guarantee acknowledgement required":
       return "Confirme no formulário que você está ciente do Pix necessário para seguir com essa reserva.";
     case "Billiards already reserved for this night":
@@ -49,13 +48,6 @@ export function ReservationForm() {
         reservation.sameDayCutoffTime,
       )
     : [];
-  const sameDayCutoffReached = selectedDate
-    ? hasSameDayReservationCutoffPassed(
-        selectedDate,
-        schedule.timezone,
-        reservation.sameDayCutoffTime,
-      )
-    : false;
   const requiresPixGuarantee =
     Number(guestCount) > 20 || reservationType === "billiards";
 
@@ -216,7 +208,7 @@ export function ReservationForm() {
                   ? "Escolha a data"
                   : timeOptions.length
                     ? "Escolha o horário"
-                    : "Fechado nessa data"}
+                    : "Sem horários disponíveis"}
               </option>
               {timeOptions.map((time) => (
                 <option key={time} value={time}>
@@ -245,12 +237,9 @@ export function ReservationForm() {
           </label>
         </div>
 
-        {sameDayCutoffReached ? (
-          <div className="mt-4 rounded-2xl border border-red-300/20 bg-red-500/10 p-4 text-sm leading-6 text-red-100">
-            As reservas para hoje encerram às {reservation.sameDayCutoffTime}. Escolha outra
-            data ou fale com a casa pelo WhatsApp.
-          </div>
-        ) : null}
+        <div className="mt-4 rounded-2xl border border-champagne/20 bg-white/[0.04] p-4 text-sm leading-6 text-mist/82">
+          As reservas online aceitam apenas horários até {reservation.sameDayCutoffTime}.
+        </div>
 
         {requiresPixGuarantee ? (
           <div className="mt-4 rounded-2xl border border-champagne/30 bg-champagne/10 p-4 text-sm leading-6 text-mist/88">

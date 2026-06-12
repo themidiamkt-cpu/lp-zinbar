@@ -514,10 +514,10 @@ export const landingData = {
     notes: [
       "A reserva de mesa é gratuita.",
       "Há estacionamento com comodidade para você.",
-      "Reservas para o mesmo dia ficam disponíveis até 19:30.",
+      "As reservas online aceitam apenas horários até 19:00.",
       "A reserva do bilhar exige Pix antecipado e confirmação de disponibilidade da noite.",
     ],
-    sameDayCutoffTime: "19:30",
+    sameDayCutoffTime: "19:00",
     modes: [
       {
         value: "table" as ReservationMode,
@@ -642,9 +642,9 @@ export const landingData = {
         answer: "Sim. O Zin Bar conta com estacionamento para trazer mais comodidade para você.",
       },
       {
-        question: "Até que horas posso reservar no mesmo dia?",
+        question: "Até que horas as reservas são aceitas?",
         answer:
-          "As reservas para o mesmo dia ficam disponíveis até 19:30. Depois desse horário, a equipe segue atendendo conforme disponibilidade da casa e pelo WhatsApp.",
+          "As reservas online do Zin Bar aceitam apenas horários até 19:00. Depois desse limite, a equipe segue atendendo conforme disponibilidade da casa e pelo WhatsApp.",
       },
       {
         question: "Como funciona a reserva do bilhar?",

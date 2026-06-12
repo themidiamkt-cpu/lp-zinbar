@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { landingData } from "@/data/landing-data";
-import { hasSameDayReservationCutoffPassed, isReservationSlotAvailable } from "@/utils/schedule";
+import { isReservationSlotAvailable, isReservationTimeAfterLimit } from "@/utils/schedule";
 
 const WEBHOOK_URL = "https://automacao2.themidiamarketing.com.br/webhook/zin-reservas";
 const { reservation, schedule } = landingData;
@@ -44,15 +44,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing reservation fields" }, { status: 400 });
   }
 
-  if (
-    hasSameDayReservationCutoffPassed(
-      date,
-      schedule.timezone,
-      reservation.sameDayCutoffTime,
-    )
-  ) {
+  if (isReservationTimeAfterLimit(time, reservation.sameDayCutoffTime)) {
     return NextResponse.json(
-      { error: `Same-day reservations unavailable after ${reservation.sameDayCutoffTime}` },
+      { error: `Reservations are only available until ${reservation.sameDayCutoffTime}` },
       { status: 400 },
     );
   }
