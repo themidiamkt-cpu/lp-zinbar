@@ -238,7 +238,8 @@ export function ReservationForm() {
         </div>
 
         <div className="mt-4 rounded-2xl border border-champagne/20 bg-white/[0.04] p-4 text-sm leading-6 text-mist/82">
-          As reservas online aceitam apenas horários até {reservation.sameDayCutoffTime}.
+          Você pode enviar a reserva a qualquer hora do dia, mas os horários disponíveis vão
+          apenas até {reservation.sameDayCutoffTime}.
         </div>
 
         {requiresPixGuarantee ? (
