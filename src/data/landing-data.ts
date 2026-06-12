@@ -30,6 +30,10 @@ export type DayKey =
 
 export type ActionVariant = "primary" | "secondary" | "ghost";
 export type ReservationMode = "table" | "billiards";
+export type ReservationBlockedDate = {
+  date: string;
+  reason: string;
+};
 
 export type ActionLink = {
   label: string;
@@ -519,6 +523,13 @@ export const landingData = {
       "A reserva do bilhar exige Pix antecipado e confirmação de disponibilidade da noite.",
     ],
     sameDayCutoffTime: "19:00",
+    blockedDates: [
+      {
+        date: "2026-06-12",
+        reason:
+          "As reservas para hoje, 12/06/2026, estão encerradas. Já atingimos o limite da casa.",
+      },
+    ] satisfies ReservationBlockedDate[],
     modes: [
       {
         value: "table" as ReservationMode,

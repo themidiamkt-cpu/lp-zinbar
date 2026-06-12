@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 
 import { landingData } from "@/data/landing-data";
-import { isReservationSlotAvailable, isReservationTimeAfterLimit } from "@/utils/schedule";
+import {
+  getBlockedReservationDate,
+  isReservationSlotAvailable,
+  isReservationTimeAfterLimit,
+} from "@/utils/schedule";
 
 const WEBHOOK_URL = "https://automacao2.themidiamarketing.com.br/webhook/zin-reservas";
 const { reservation, schedule } = landingData;
@@ -51,6 +55,12 @@ export async function POST(request: Request) {
     );
   }
 
+  const blockedDate = getBlockedReservationDate(reservation.blockedDates, date);
+
+  if (blockedDate) {
+    return NextResponse.json({ error: blockedDate.reason }, { status: 400 });
+  }
+
   if (
     !isReservationSlotAvailable(
       schedule.week,
@@ -58,6 +68,7 @@ export async function POST(request: Request) {
       time,
       schedule.timezone,
       reservation.sameDayCutoffTime,
+      reservation.blockedDates,
     )
   ) {
     return NextResponse.json({ error: "Reservation time unavailable" }, { status: 400 });

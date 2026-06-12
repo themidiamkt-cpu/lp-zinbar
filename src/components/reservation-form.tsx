@@ -7,6 +7,7 @@ import { Icon } from "@/components/icons";
 import { landingData } from "@/data/landing-data";
 import type { ReservationMode } from "@/data/landing-data";
 import {
+  getBlockedReservationDate,
   getReservationDateMin,
   getReservationTimeOptions,
 } from "@/utils/schedule";
@@ -17,6 +18,10 @@ const { reservation, schedule } = landingData;
 const minReservationDate = getReservationDateMin(schedule.timezone);
 
 function getReservationErrorMessage(error: string) {
+  if (reservation.blockedDates.some((blockedDate) => blockedDate.reason === error)) {
+    return error;
+  }
+
   switch (error) {
     case `Reservations are only available until ${reservation.sameDayCutoffTime}`:
       return `Não aceitamos reservas para horários depois de ${reservation.sameDayCutoffTime}. Escolha um horário até esse limite.`;
@@ -38,6 +43,9 @@ export function ReservationForm() {
   const [selectedDate, setSelectedDate] = useState("");
   const [guestCount, setGuestCount] = useState("");
   const [reservationType, setReservationType] = useState<ReservationMode>("table");
+  const selectedBlockedDate = selectedDate
+    ? getBlockedReservationDate(reservation.blockedDates, selectedDate)
+    : undefined;
 
   const timeOptions = selectedDate
     ? getReservationTimeOptions(
@@ -46,10 +54,13 @@ export function ReservationForm() {
         schedule.timezone,
         30,
         reservation.sameDayCutoffTime,
+        reservation.blockedDates,
       )
     : [];
   const requiresPixGuarantee =
     Number(guestCount) > 20 || reservationType === "billiards";
+  const isSubmitDisabled =
+    submitState === "submitting" || (Boolean(selectedDate) && !timeOptions.length);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -206,6 +217,8 @@ export function ReservationForm() {
               <option value="">
                 {!selectedDate
                   ? "Escolha a data"
+                  : selectedBlockedDate
+                    ? "Data indisponível"
                   : timeOptions.length
                     ? "Escolha o horário"
                     : "Sem horários disponíveis"}
@@ -238,8 +251,9 @@ export function ReservationForm() {
         </div>
 
         <div className="mt-4 rounded-2xl border border-champagne/20 bg-white/[0.04] p-4 text-sm leading-6 text-mist/82">
-          Você pode enviar a reserva a qualquer hora do dia, mas os horários disponíveis vão
-          apenas até {reservation.sameDayCutoffTime}.
+          {selectedBlockedDate
+            ? selectedBlockedDate.reason
+            : `Você pode enviar a reserva a qualquer hora do dia, mas os horários disponíveis vão apenas até ${reservation.sameDayCutoffTime}.`}
         </div>
 
         {requiresPixGuarantee ? (
@@ -277,12 +291,16 @@ export function ReservationForm() {
 
         <button
           type="submit"
-          disabled={submitState === "submitting"}
+          disabled={isSubmitDisabled}
           className="focus-ring shimmer-on-hover cta-ring group relative mt-6 inline-flex w-full items-center justify-center overflow-hidden rounded-full border border-champagne/25 bg-[linear-gradient(135deg,#9d2235_0%,#7a1a2d_45%,#4b121b_100%)] px-5 py-3 text-sm font-semibold tracking-wide text-white transition duration-300 ease-out hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-70"
         >
           <span className="relative z-10 flex items-center gap-2">
             <Icon name="calendar" className="h-4 w-4" />
-            {submitState === "submitting" ? "Enviando reserva..." : "Enviar reserva"}
+            {submitState === "submitting"
+              ? "Enviando reserva..."
+              : selectedBlockedDate
+                ? "Reservas encerradas nesta data"
+                : "Enviar reserva"}
             <Icon
               name="arrowRight"
               className="h-3.5 w-3.5 -translate-x-0.5 opacity-70 transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-100"

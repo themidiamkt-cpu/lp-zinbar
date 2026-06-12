@@ -1,4 +1,10 @@
-import type { DayKey, ScheduleDay, SchedulePeriod, WeeklySchedule } from "@/data/landing-data";
+import type {
+  DayKey,
+  ReservationBlockedDate,
+  ScheduleDay,
+  SchedulePeriod,
+  WeeklySchedule,
+} from "@/data/landing-data";
 
 const orderedDays: DayKey[] = [
   "monday",
@@ -180,13 +186,25 @@ export function getReservationDay(week: WeeklySchedule, date: string) {
   return dayKey ? week.find((day) => day.key === dayKey) : undefined;
 }
 
+export function getBlockedReservationDate(
+  blockedDates: ReservationBlockedDate[],
+  date: string,
+) {
+  return blockedDates.find((blockedDate) => blockedDate.date === date);
+}
+
 export function getReservationTimeOptions(
   week: WeeklySchedule,
   date: string,
   timeZone: string,
   intervalMinutes = 30,
   latestReservationTime?: string,
+  blockedDates: ReservationBlockedDate[] = [],
 ) {
+  if (getBlockedReservationDate(blockedDates, date)) {
+    return [];
+  }
+
   const day = getReservationDay(week, date);
 
   if (!day?.periods.length) {
@@ -222,6 +240,7 @@ export function isReservationSlotAvailable(
   time: string,
   timeZone: string,
   latestReservationTime?: string,
+  blockedDates: ReservationBlockedDate[] = [],
 ) {
   if (!/^\d{2}:\d{2}$/.test(time)) {
     return false;
@@ -231,12 +250,17 @@ export function isReservationSlotAvailable(
     return false;
   }
 
+  if (getBlockedReservationDate(blockedDates, date)) {
+    return false;
+  }
+
   const options = getReservationTimeOptions(
     week,
     date,
     timeZone,
     30,
     latestReservationTime,
+    blockedDates,
   );
   return options.includes(time);
 }
