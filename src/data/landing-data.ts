@@ -525,9 +525,9 @@ export const landingData = {
     sameDayCutoffTime: "19:00",
     blockedDates: [
       {
-        date: "2026-06-13",
+        date: "2026-06-24",
         reason:
-          "Hoje, 13/06/2026, não estamos mais fazendo reservas. O atendimento está funcionando somente por ordem de chegada.",
+          "Hoje, 24/06/2026, não estamos mais fazendo reservas. O atendimento está funcionando somente por ordem de chegada.",
       },
     ] satisfies ReservationBlockedDate[],
     modes: [
