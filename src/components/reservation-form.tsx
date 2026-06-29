@@ -7,8 +7,10 @@ import { Icon } from "@/components/icons";
 import { landingData } from "@/data/landing-data";
 import type { ReservationMode } from "@/data/landing-data";
 import {
+  isAfternoonReservationTimeBlocked,
   getBlockedReservationDate,
   getReservationDateMin,
+  getReservationDepositRule,
   getReservationTimeOptions,
 } from "@/utils/schedule";
 
@@ -16,6 +18,7 @@ type SubmitState = "idle" | "submitting" | "error";
 
 const { reservation, schedule } = landingData;
 const minReservationDate = getReservationDateMin(schedule.timezone);
+const afternoonBlockExemptDates = reservation.depositRules.map((rule) => rule.date);
 
 function getReservationErrorMessage(error: string) {
   if (reservation.blockedDates.some((blockedDate) => blockedDate.reason === error)) {
@@ -23,6 +26,8 @@ function getReservationErrorMessage(error: string) {
   }
 
   switch (error) {
+    case `Lunch reservations are only available until ${reservation.lunchLatestReservationTime}`:
+      return `Para almoço, só aceitamos reservas até ${reservation.lunchLatestReservationTime}. Depois disso, novos horários voltam a aparecer apenas no período da noite.`;
     case `Reservations are only available until ${reservation.sameDayCutoffTime}`:
       return `Não aceitamos reservas para horários depois de ${reservation.sameDayCutoffTime}. Escolha um horário até esse limite.`;
     case "Pix guarantee acknowledgement required":
@@ -41,6 +46,7 @@ export function ReservationForm() {
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [submitError, setSubmitError] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
   const [guestCount, setGuestCount] = useState("");
   const [reservationType, setReservationType] = useState<ReservationMode>("table");
   const selectedBlockedDate = selectedDate
@@ -53,12 +59,21 @@ export function ReservationForm() {
         selectedDate,
         schedule.timezone,
         30,
+        reservation.lunchLatestReservationTime,
         reservation.sameDayCutoffTime,
         reservation.blockedDates,
+        afternoonBlockExemptDates,
       )
     : [];
+  const selectedDepositRule =
+    selectedDate && selectedTime
+      ? getReservationDepositRule(reservation.depositRules, selectedDate, selectedTime)
+      : undefined;
   const requiresPixGuarantee =
-    Number(guestCount) > 20 || reservationType === "billiards";
+    Number(guestCount) > 20 || reservationType === "billiards" || Boolean(selectedDepositRule);
+  const estimatedDepositAmount = selectedDepositRule
+    ? Number(guestCount || 0) * selectedDepositRule.depositPerAdult
+    : 0;
   const isSubmitDisabled =
     submitState === "submitting" || (Boolean(selectedDate) && !timeOptions.length);
 
@@ -72,13 +87,14 @@ export function ReservationForm() {
     const params = new URLSearchParams(window.location.search);
     const formReservationType =
       formData.get("reservationType") === "billiards" ? "billiards" : "table";
+    const formTime = String(formData.get("time") ?? "");
 
     const payload = {
       name: String(formData.get("name") ?? "").trim(),
       whatsapp: String(formData.get("whatsapp") ?? "").trim(),
       reservationType: formReservationType,
       date: String(formData.get("date") ?? ""),
-      time: String(formData.get("time") ?? ""),
+      time: formTime,
       guests: Number(formData.get("guests") ?? 0),
       pixGuaranteeRequired:
         Number(formData.get("guests") ?? 0) > 20 || formReservationType === "billiards",
@@ -93,6 +109,19 @@ export function ReservationForm() {
     };
 
     try {
+      if (
+        isAfternoonReservationTimeBlocked(
+          formTime,
+          reservation.lunchLatestReservationTime,
+          String(formData.get("date") ?? ""),
+          afternoonBlockExemptDates,
+        )
+      ) {
+        throw new Error(
+          `Lunch reservations are only available until ${reservation.lunchLatestReservationTime}`,
+        );
+      }
+
       const response = await fetch("/api/reservas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -199,7 +228,10 @@ export function ReservationForm() {
               required
               min={minReservationDate}
               value={selectedDate}
-              onChange={(event) => setSelectedDate(event.target.value)}
+              onChange={(event) => {
+                setSelectedDate(event.target.value);
+                setSelectedTime("");
+              }}
               className="mt-2 w-full rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm text-ink outline-none transition [color-scheme:light] focus:border-champagne/45 focus:bg-white"
             />
           </label>
@@ -211,6 +243,8 @@ export function ReservationForm() {
             <select
               name="time"
               required
+              value={selectedTime}
+              onChange={(event) => setSelectedTime(event.target.value)}
               disabled={!selectedDate || !timeOptions.length}
               className="mt-2 w-full rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm text-ink outline-none transition [color-scheme:light] focus:border-champagne/45 focus:bg-white disabled:cursor-not-allowed disabled:bg-white/70 disabled:text-slate"
             >
@@ -233,7 +267,7 @@ export function ReservationForm() {
 
           <label className="sm:col-span-2">
             <span className="text-xs font-semibold uppercase tracking-[0.18em] text-mist/68">
-              Número de pessoas
+              {selectedDepositRule ? "Número de adultos" : "Número de pessoas"}
             </span>
             <input
               name="guests"
@@ -253,18 +287,26 @@ export function ReservationForm() {
         <div className="mt-4 rounded-2xl border border-champagne/20 bg-white/[0.04] p-4 text-sm leading-6 text-mist/82">
           {selectedBlockedDate
             ? selectedBlockedDate.reason
-            : `Você pode enviar a reserva a qualquer hora do dia, mas os horários disponíveis vão apenas até ${reservation.sameDayCutoffTime}.`}
+            : `Você pode enviar a reserva a qualquer hora do dia. No almoço, os horários disponíveis vão somente até ${reservation.lunchLatestReservationTime}; à noite, vão até ${reservation.sameDayCutoffTime}.`}
         </div>
 
         {requiresPixGuarantee ? (
           <div className="mt-4 rounded-2xl border border-champagne/30 bg-champagne/10 p-4 text-sm leading-6 text-mist/88">
             <p className="font-semibold text-ivory">
-              {reservationType === "billiards"
+              {selectedDepositRule
+                ? `${selectedDepositRule.title}: sinal antecipado necessário.`
+                : reservationType === "billiards"
                 ? "A reserva do bilhar exige Pix antecipado para confirmação."
                 : "Reservas acima de 20 pessoas precisam de Pix de garantia."}
             </p>
             <p className="mt-1">
-              {reservationType === "billiards"
+              {selectedDepositRule
+                ? `${selectedDepositRule.description}${
+                    estimatedDepositAmount > 0
+                      ? ` Para ${guestCount} adulto(s), o sinal estimado é de R$ ${estimatedDepositAmount}.`
+                      : ""
+                  } A equipe vai enviar os dados do Pix pelo WhatsApp para concluir a confirmação.`
+                : reservationType === "billiards"
                 ? "Só pode existir uma reserva de bilhar por noite. A equipe vai validar a disponibilidade e enviar os dados do Pix pelo WhatsApp para concluir a confirmação."
                 : "A equipe do Zin Bar vai enviar os dados do Pix pelo WhatsApp para confirmar a reserva do grupo."}
             </p>

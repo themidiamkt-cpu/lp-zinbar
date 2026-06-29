@@ -1,6 +1,7 @@
 import type {
   DayKey,
   ReservationBlockedDate,
+  ReservationDepositRule,
   ScheduleDay,
   SchedulePeriod,
   WeeklySchedule,
@@ -19,6 +20,23 @@ const orderedDays: DayKey[] = [
 function parseTime(time: string) {
   const [hour, minute] = time.split(":").map(Number);
   return hour * 60 + minute;
+}
+
+function isAfternoonReservationWindowBlocked(
+  minutes: number,
+  lunchLatestReservationTime?: string,
+  date?: string,
+  afternoonBlockExemptDates: string[] = [],
+) {
+  if (!lunchLatestReservationTime) {
+    return false;
+  }
+
+  if (date && afternoonBlockExemptDates.includes(date)) {
+    return false;
+  }
+
+  return minutes > parseTime(lunchLatestReservationTime) && minutes < parseTime("17:00");
 }
 
 function formatTime(minutes: number) {
@@ -193,13 +211,29 @@ export function getBlockedReservationDate(
   return blockedDates.find((blockedDate) => blockedDate.date === date);
 }
 
+export function getReservationDepositRule(
+  depositRules: ReservationDepositRule[],
+  date: string,
+  time: string,
+) {
+  if (!/^\d{2}:\d{2}$/.test(time)) {
+    return undefined;
+  }
+
+  return depositRules.find(
+    (rule) => rule.date === date && parseTime(time) > parseTime(rule.startsAfter),
+  );
+}
+
 export function getReservationTimeOptions(
   week: WeeklySchedule,
   date: string,
   timeZone: string,
   intervalMinutes = 30,
+  lunchLatestReservationTime?: string,
   latestReservationTime?: string,
   blockedDates: ReservationBlockedDate[] = [],
+  afternoonBlockExemptDates: string[] = [],
 ) {
   if (getBlockedReservationDate(blockedDates, date)) {
     return [];
@@ -225,7 +259,15 @@ export function getReservationTimeOptions(
     const options: string[] = [];
 
     for (let minutes = firstSlot; minutes < closes; minutes += intervalMinutes) {
-      if (minutes <= latestReservationMinutes) {
+      if (
+        minutes <= latestReservationMinutes &&
+        !isAfternoonReservationWindowBlocked(
+          minutes,
+          lunchLatestReservationTime,
+          date,
+          afternoonBlockExemptDates,
+        )
+      ) {
         options.push(formatTime(minutes));
       }
     }
@@ -239,8 +281,10 @@ export function isReservationSlotAvailable(
   date: string,
   time: string,
   timeZone: string,
+  lunchLatestReservationTime?: string,
   latestReservationTime?: string,
   blockedDates: ReservationBlockedDate[] = [],
+  afternoonBlockExemptDates: string[] = [],
 ) {
   if (!/^\d{2}:\d{2}$/.test(time)) {
     return false;
@@ -259,10 +303,30 @@ export function isReservationSlotAvailable(
     date,
     timeZone,
     30,
+    lunchLatestReservationTime,
     latestReservationTime,
     blockedDates,
+    afternoonBlockExemptDates,
   );
   return options.includes(time);
+}
+
+export function isAfternoonReservationTimeBlocked(
+  time: string,
+  lunchLatestReservationTime?: string,
+  date?: string,
+  afternoonBlockExemptDates: string[] = [],
+) {
+  if (!/^\d{2}:\d{2}$/.test(time)) {
+    return false;
+  }
+
+  return isAfternoonReservationWindowBlocked(
+    parseTime(time),
+    lunchLatestReservationTime,
+    date,
+    afternoonBlockExemptDates,
+  );
 }
 
 export function isReservationTimeAfterLimit(time: string, latestReservationTime: string) {

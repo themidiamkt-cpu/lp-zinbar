@@ -34,6 +34,13 @@ export type ReservationBlockedDate = {
   date: string;
   reason: string;
 };
+export type ReservationDepositRule = {
+  date: string;
+  startsAfter: string;
+  depositPerAdult: number;
+  title: string;
+  description: string;
+};
 
 export type ActionLink = {
   label: string;
@@ -519,10 +526,23 @@ export const landingData = {
       "A reserva de mesa é gratuita.",
       "Há estacionamento com comodidade para você.",
       "O pedido de reserva pode ser enviado a qualquer hora do dia.",
-      "Os horários disponíveis para reserva vão até 19:00.",
+      "No almoço, os horários disponíveis para reserva vão somente até 12:00.",
+      "À noite, os horários disponíveis para reserva vão até 19:00.",
+      "Em dias especiais, reservas após 12:00 podem exigir sinal antecipado.",
       "A reserva do bilhar exige Pix antecipado e confirmação de disponibilidade da noite.",
     ],
+    lunchLatestReservationTime: "12:00",
     sameDayCutoffTime: "19:00",
+    depositRules: [
+      {
+        date: "2026-06-29",
+        startsAfter: "12:00",
+        depositPerAdult: 100,
+        title: "Dia de jogo",
+        description:
+          "Amanhã, 29/06/2026, reservas após 12:00 serão feitas somente mediante sinal de R$ 100 por adulto.",
+      },
+    ] satisfies ReservationDepositRule[],
     blockedDates: [
       {
         date: "2026-06-24",
@@ -656,7 +676,7 @@ export const landingData = {
       {
         question: "Até que horas há horários disponíveis para reserva?",
         answer:
-          "Você pode enviar o pedido de reserva a qualquer hora do dia, mas os horários disponíveis para escolher vão apenas até 19:00.",
+          "Você pode enviar o pedido de reserva a qualquer hora do dia. Em dias comuns, os horários disponíveis para almoço vão somente até 12:00 e novos horários voltam no período da noite, com reservas até 19:00. Em dias especiais, a casa pode liberar reservas após 12:00 mediante sinal antecipado.",
       },
       {
         question: "Como funciona a reserva do bilhar?",

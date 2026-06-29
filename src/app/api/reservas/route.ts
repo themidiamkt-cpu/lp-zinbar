@@ -2,13 +2,16 @@ import { NextResponse } from "next/server";
 
 import { landingData } from "@/data/landing-data";
 import {
+  isAfternoonReservationTimeBlocked,
   getBlockedReservationDate,
+  getReservationDepositRule,
   isReservationSlotAvailable,
   isReservationTimeAfterLimit,
 } from "@/utils/schedule";
 
 const WEBHOOK_URL = "https://automacao2.themidiamarketing.com.br/webhook/zin-reservas";
 const { reservation, schedule } = landingData;
+const afternoonBlockExemptDates = reservation.depositRules.map((rule) => rule.date);
 
 type ReservationPayload = {
   name?: string;
@@ -55,6 +58,20 @@ export async function POST(request: Request) {
     );
   }
 
+  if (
+    isAfternoonReservationTimeBlocked(
+      time,
+      reservation.lunchLatestReservationTime,
+      date,
+      afternoonBlockExemptDates,
+    )
+  ) {
+    return NextResponse.json(
+      { error: `Lunch reservations are only available until ${reservation.lunchLatestReservationTime}` },
+      { status: 400 },
+    );
+  }
+
   const blockedDate = getBlockedReservationDate(reservation.blockedDates, date);
 
   if (blockedDate) {
@@ -67,14 +84,18 @@ export async function POST(request: Request) {
       date,
       time,
       schedule.timezone,
+      reservation.lunchLatestReservationTime,
       reservation.sameDayCutoffTime,
       reservation.blockedDates,
+      afternoonBlockExemptDates,
     )
   ) {
     return NextResponse.json({ error: "Reservation time unavailable" }, { status: 400 });
   }
 
-  const pixGuaranteeRequired = guests > 20 || reservationType === "billiards";
+  const depositRule = getReservationDepositRule(reservation.depositRules, date, time);
+  const depositAmount = depositRule ? guests * depositRule.depositPerAdult : 0;
+  const pixGuaranteeRequired = guests > 20 || reservationType === "billiards" || Boolean(depositRule);
 
   if (pixGuaranteeRequired && !payload.pixGuaranteeAcknowledged) {
     return NextResponse.json({ error: "Pix guarantee acknowledgement required" }, { status: 400 });
@@ -95,6 +116,14 @@ export async function POST(request: Request) {
       pixGuaranteeAcknowledged: pixGuaranteeRequired
         ? true
         : Boolean(payload.pixGuaranteeAcknowledged),
+      depositRule: depositRule
+        ? {
+            title: depositRule.title,
+            startsAfter: depositRule.startsAfter,
+            depositPerAdult: depositRule.depositPerAdult,
+            estimatedAmount: depositAmount,
+          }
+        : undefined,
       sameDayCutoffTime: reservation.sameDayCutoffTime,
       nightReservationKey: reservationType === "billiards" ? date : undefined,
       exclusivePerNight: reservationType === "billiards",
