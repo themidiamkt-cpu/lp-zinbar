@@ -18,7 +18,6 @@ type SubmitState = "idle" | "submitting" | "error";
 
 const { reservation, schedule } = landingData;
 const minReservationDate = getReservationDateMin(schedule.timezone);
-const afternoonBlockExemptDates = reservation.depositRules.map((rule) => rule.date);
 
 function getReservationErrorMessage(error: string) {
   if (reservation.blockedDates.some((blockedDate) => blockedDate.reason === error)) {
@@ -62,7 +61,6 @@ export function ReservationForm() {
         reservation.lunchLatestReservationTime,
         reservation.sameDayCutoffTime,
         reservation.blockedDates,
-        afternoonBlockExemptDates,
       )
     : [];
   const selectedDepositRule =
@@ -113,8 +111,6 @@ export function ReservationForm() {
         isAfternoonReservationTimeBlocked(
           formTime,
           reservation.lunchLatestReservationTime,
-          String(formData.get("date") ?? ""),
-          afternoonBlockExemptDates,
         )
       ) {
         throw new Error(

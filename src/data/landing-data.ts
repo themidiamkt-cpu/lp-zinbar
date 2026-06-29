@@ -528,7 +528,7 @@ export const landingData = {
       "O pedido de reserva pode ser enviado a qualquer hora do dia.",
       "No almoço, os horários disponíveis para reserva vão somente até 12:00.",
       "À noite, os horários disponíveis para reserva vão até 19:00.",
-      "Em dias especiais, reservas após 12:00 podem exigir sinal antecipado.",
+      "Em dias especiais, horários disponíveis após 12:00 podem exigir sinal antecipado.",
       "A reserva do bilhar exige Pix antecipado e confirmação de disponibilidade da noite.",
     ],
     lunchLatestReservationTime: "12:00",
@@ -540,14 +540,14 @@ export const landingData = {
         depositPerAdult: 100,
         title: "Dia de jogo",
         description:
-          "Amanhã, 29/06/2026, reservas após 12:00 serão feitas somente mediante sinal de R$ 100 por adulto.",
+          "No dia 29/06/2026, os horários disponíveis após 12:00 serão reservados somente mediante sinal de R$ 100 por adulto.",
       },
     ] satisfies ReservationDepositRule[],
     blockedDates: [
       {
-        date: "2026-06-24",
+        date: "2026-06-29",
         reason:
-          "Hoje, 24/06/2026, não estamos mais fazendo reservas. O atendimento está funcionando somente por ordem de chegada.",
+          "Hoje, 29/06/2026, não estamos fazendo reservas. O atendimento está funcionando somente por ordem de chegada.",
       },
     ] satisfies ReservationBlockedDate[],
     modes: [
@@ -676,7 +676,7 @@ export const landingData = {
       {
         question: "Até que horas há horários disponíveis para reserva?",
         answer:
-          "Você pode enviar o pedido de reserva a qualquer hora do dia. Em dias comuns, os horários disponíveis para almoço vão somente até 12:00 e novos horários voltam no período da noite, com reservas até 19:00. Em dias especiais, a casa pode liberar reservas após 12:00 mediante sinal antecipado.",
+          "Você pode enviar o pedido de reserva a qualquer hora do dia. Os horários disponíveis para almoço vão somente até 12:00 e novos horários voltam apenas no período da noite, com reservas até 19:00. Em dias especiais, horários disponíveis da noite podem exigir sinal antecipado.",
       },
       {
         question: "Como funciona a reserva do bilhar?",

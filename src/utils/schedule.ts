@@ -25,14 +25,8 @@ function parseTime(time: string) {
 function isAfternoonReservationWindowBlocked(
   minutes: number,
   lunchLatestReservationTime?: string,
-  date?: string,
-  afternoonBlockExemptDates: string[] = [],
 ) {
   if (!lunchLatestReservationTime) {
-    return false;
-  }
-
-  if (date && afternoonBlockExemptDates.includes(date)) {
     return false;
   }
 
@@ -233,7 +227,6 @@ export function getReservationTimeOptions(
   lunchLatestReservationTime?: string,
   latestReservationTime?: string,
   blockedDates: ReservationBlockedDate[] = [],
-  afternoonBlockExemptDates: string[] = [],
 ) {
   if (getBlockedReservationDate(blockedDates, date)) {
     return [];
@@ -264,8 +257,6 @@ export function getReservationTimeOptions(
         !isAfternoonReservationWindowBlocked(
           minutes,
           lunchLatestReservationTime,
-          date,
-          afternoonBlockExemptDates,
         )
       ) {
         options.push(formatTime(minutes));
@@ -284,7 +275,6 @@ export function isReservationSlotAvailable(
   lunchLatestReservationTime?: string,
   latestReservationTime?: string,
   blockedDates: ReservationBlockedDate[] = [],
-  afternoonBlockExemptDates: string[] = [],
 ) {
   if (!/^\d{2}:\d{2}$/.test(time)) {
     return false;
@@ -306,7 +296,6 @@ export function isReservationSlotAvailable(
     lunchLatestReservationTime,
     latestReservationTime,
     blockedDates,
-    afternoonBlockExemptDates,
   );
   return options.includes(time);
 }
@@ -314,8 +303,6 @@ export function isReservationSlotAvailable(
 export function isAfternoonReservationTimeBlocked(
   time: string,
   lunchLatestReservationTime?: string,
-  date?: string,
-  afternoonBlockExemptDates: string[] = [],
 ) {
   if (!/^\d{2}:\d{2}$/.test(time)) {
     return false;
@@ -324,8 +311,6 @@ export function isAfternoonReservationTimeBlocked(
   return isAfternoonReservationWindowBlocked(
     parseTime(time),
     lunchLatestReservationTime,
-    date,
-    afternoonBlockExemptDates,
   );
 }
 

@@ -11,7 +11,6 @@ import {
 
 const WEBHOOK_URL = "https://automacao2.themidiamarketing.com.br/webhook/zin-reservas";
 const { reservation, schedule } = landingData;
-const afternoonBlockExemptDates = reservation.depositRules.map((rule) => rule.date);
 
 type ReservationPayload = {
   name?: string;
@@ -62,8 +61,6 @@ export async function POST(request: Request) {
     isAfternoonReservationTimeBlocked(
       time,
       reservation.lunchLatestReservationTime,
-      date,
-      afternoonBlockExemptDates,
     )
   ) {
     return NextResponse.json(
@@ -87,7 +84,6 @@ export async function POST(request: Request) {
       reservation.lunchLatestReservationTime,
       reservation.sameDayCutoffTime,
       reservation.blockedDates,
-      afternoonBlockExemptDates,
     )
   ) {
     return NextResponse.json({ error: "Reservation time unavailable" }, { status: 400 });
