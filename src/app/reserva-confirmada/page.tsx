@@ -35,6 +35,7 @@ export default function ReservationConfirmedPage() {
               content_name: 'Reserva enviada',
               content_category: 'Reserva'
             });
+            fbq('trackCustom', 'ReservationSuccess');
           }
         `}
       </Script>
