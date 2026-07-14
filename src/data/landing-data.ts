@@ -110,8 +110,8 @@ const business: BusinessData = {
   postalCode: "13025-540",
   addressLine: "Rua Dr. Oswaldo Cruz, 586",
   fullAddress: "Rua Dr. Oswaldo Cruz, 586, Taquaral, Campinas - SP",
-  telephone: "+55-19-99116-1095",
-  telephoneDisplay: "(19) 99116-1095",
+  telephone: "+55-19-99347-1351",
+  telephoneDisplay: "(19) 99347-1351",
   siteUrl: "https://zinbar.com.br",
   foundingYear: 2007,
   slogan: "Bar e restaurante no Taquaral para almoço, jantar e happy hour em Campinas.",
@@ -155,7 +155,7 @@ const actions = {
   whatsapp: {
     label: "Falar no WhatsApp",
     shortLabel: "WhatsApp",
-    href: "https://wa.me/5519991161095",
+    href: "https://wa.me/5519993471351",
     icon: "whatsapp",
     variant: "ghost",
     external: true,
@@ -696,7 +696,7 @@ export const landingData = {
       {
         question: "Qual o telefone do Zin Bar e Restaurante?",
         answer:
-          "Você pode entrar em contato com o Zin Bar pelo WhatsApp (19) 99116-1095 ou pelo botão de contato na página para tirar dúvidas rapidamente.",
+          "Você pode entrar em contato com o Zin Bar pelo WhatsApp (19) 99347-1351 ou pelo botão de contato na página para tirar dúvidas rapidamente.",
       },
       {
         question: "O Zin Bar tem música ao vivo?",
