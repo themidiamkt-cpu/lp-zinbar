@@ -147,7 +147,7 @@ const actions = {
   menu: {
     label: "Ver cardápio",
     shortLabel: "Cardápio",
-    href: "https://xmenu.com.br/pedidos/?loja=17253",
+    href: "https://zinbar.tmfood.com.br/cardapio/zinbar",
     icon: "menu",
     variant: "ghost",
     external: true,
