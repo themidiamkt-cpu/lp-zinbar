@@ -18,16 +18,20 @@ function VenueSectorShape({
   sector,
   dimmed,
   inCart,
+  scale,
   onSelect,
 }: {
   sector: VenueSector;
   dimmed: boolean;
   inCart: boolean;
+  scale: number;
   onSelect: (id: SectorId) => void;
 }) {
   const capacity = sectorCapacity(sector.id);
   const soldOut = capacity <= 0;
   const disabled = soldOut || dimmed;
+  const cx = sector.x + sector.width / 2;
+  const cy = sector.y + sector.height / 2;
   return (
     <g
       className={[
@@ -60,31 +64,26 @@ function VenueSectorShape({
         height={sector.height}
         rx="8"
         className="rv-sector-outline"
+        vectorEffect="non-scaling-stroke"
       />
-      <rect
-        x={sector.x + sector.width / 2 - 48}
-        y={sector.y + sector.height / 2 - 24}
-        width="96"
-        height="48"
-        rx="8"
-        className="rv-sector-label-bg"
-      />
-      <text
-        x={sector.x + sector.width / 2}
-        y={sector.y + sector.height / 2 - 3}
-        textAnchor="middle"
-        className="rv-sector-label"
-      >
-        SETOR {sector.id}
-      </text>
-      <text
-        x={sector.x + sector.width / 2}
-        y={sector.y + sector.height / 2 + 15}
-        textAnchor="middle"
-        className="rv-sector-sub"
-      >
-        {soldOut ? "ESGOTADO" : `${capacity} LUGARES`}
-      </text>
+      {/* Rótulo em tamanho de tela constante: continua nítido em qualquer zoom. */}
+      <g transform={`translate(${cx} ${cy}) scale(${scale})`}>
+        <rect
+          x="-42"
+          y="-19"
+          width="84"
+          height="38"
+          rx="7"
+          className="rv-sector-label-bg"
+          vectorEffect="non-scaling-stroke"
+        />
+        <text x="0" y="-2" textAnchor="middle" className="rv-sector-label">
+          SETOR {sector.id}
+        </text>
+        <text x="0" y="13" textAnchor="middle" className="rv-sector-sub">
+          {soldOut ? "ESGOTADO" : `${capacity} LUGARES`}
+        </text>
+      </g>
     </g>
   );
 }
@@ -96,6 +95,7 @@ function Landmark({
   height,
   label,
   vertical = false,
+  scale,
 }: {
   x: number;
   y: number;
@@ -103,26 +103,52 @@ function Landmark({
   height: number;
   label: string;
   vertical?: boolean;
+  scale: number;
 }) {
+  const cx = x + width / 2;
+  const cy = y + height / 2;
   return (
     <g className="rv-landmark">
-      <rect x={x} y={y} width={width} height={height} rx="4" />
-      <text
-        x={x + width / 2}
-        y={y + height / 2}
-        textAnchor="middle"
-        dominantBaseline="middle"
-        transform={
-          vertical ? `rotate(90 ${x + width / 2} ${y + height / 2})` : undefined
-        }
+      <rect
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        rx="4"
+        vectorEffect="non-scaling-stroke"
+      />
+      <g
+        transform={`translate(${cx} ${cy}) rotate(${vertical ? 90 : 0}) scale(${scale})`}
       >
-        {label}
+        <text x="0" y="0" textAnchor="middle" dominantBaseline="middle">
+          {label}
+        </text>
+      </g>
+    </g>
+  );
+}
+
+function ZoneLabel({
+  x,
+  y,
+  scale,
+  children,
+}: {
+  x: number;
+  y: number;
+  scale: number;
+  children: string;
+}) {
+  return (
+    <g transform={`translate(${x} ${y}) scale(${scale})`}>
+      <text x="0" y="0" textAnchor="middle" className="rv-zone-label">
+        {children}
       </text>
     </g>
   );
 }
 
-function VenueLandmarks() {
+function VenueLandmarks({ scale }: { scale: number }) {
   return (
     <g aria-hidden="true">
       <rect
@@ -132,6 +158,7 @@ function VenueLandmarks() {
         width="1055"
         height="760"
         rx="10"
+        vectorEffect="non-scaling-stroke"
       />
       <rect
         className="rv-floor-border"
@@ -140,6 +167,7 @@ function VenueLandmarks() {
         width="1055"
         height="650"
         rx="10"
+        vectorEffect="non-scaling-stroke"
       />
       <Landmark
         x={965}
@@ -148,6 +176,7 @@ function VenueLandmarks() {
         height={305}
         label="ÁREA KIDS"
         vertical
+        scale={scale}
       />
       <Landmark
         x={965}
@@ -156,6 +185,7 @@ function VenueLandmarks() {
         height={335}
         label="BANHEIROS"
         vertical
+        scale={scale}
       />
       <Landmark
         x={18}
@@ -164,19 +194,42 @@ function VenueLandmarks() {
         height={167}
         label="ENTRADA →"
         vertical
+        scale={scale}
       />
-      <Landmark x={125} y={702} width={235} height={48} label="BAR" />
-      <Landmark x={390} y={665} width={230} height={80} label="BUFFET FRIO" />
-      <Landmark x={690} y={640} width={260} height={56} label="BUFFET QUENTE" />
-      <Landmark x={690} y={715} width={260} height={45} label="CAIXA" />
-      <text x="530" y="605" className="rv-zone-label" textAnchor="middle">
+      <Landmark x={125} y={702} width={235} height={48} label="BAR" scale={scale} />
+      <Landmark
+        x={390}
+        y={665}
+        width={230}
+        height={80}
+        label="BUFFET FRIO"
+        scale={scale}
+      />
+      <Landmark
+        x={690}
+        y={640}
+        width={260}
+        height={56}
+        label="BUFFET QUENTE"
+        scale={scale}
+      />
+      <Landmark x={690} y={715} width={260} height={45} label="CAIXA" scale={scale} />
+      <ZoneLabel x={530} y={605} scale={scale}>
         SALÃO · ENTRADA
-      </text>
+      </ZoneLabel>
       <path
         d="M305 630H630M140 350v14m15-14h65m190 0h65m195 0h125"
         className="rv-walkway"
+        vectorEffect="non-scaling-stroke"
       />
-      <Landmark x={333} y={874} width={276} height={78} label="ÁREA BILHAR" />
+      <Landmark
+        x={333}
+        y={874}
+        width={276}
+        height={78}
+        label="ÁREA BILHAR"
+        scale={scale}
+      />
       <Landmark
         x={956}
         y={1030}
@@ -184,12 +237,13 @@ function VenueLandmarks() {
         height={354}
         label="BAR MEZANINO"
         vertical
+        scale={scale}
       />
-      <Landmark x={70} y={1331} width={292} height={42} label="ESCADA ↑" />
-      <Landmark x={443} y={1360} width={202} height={60} label="MÚSICO" />
-      <text x="479" y="1156" textAnchor="middle" className="rv-zone-label">
+      <Landmark x={70} y={1331} width={292} height={42} label="ESCADA ↑" scale={scale} />
+      <Landmark x={443} y={1360} width={202} height={60} label="MÚSICO" scale={scale} />
+      <ZoneLabel x={479} y={1156} scale={scale}>
         MEZANINO
-      </text>
+      </ZoneLabel>
       <rect
         x="428"
         y="1185"
@@ -199,11 +253,12 @@ function VenueLandmarks() {
         fill="url(#rv-dance-grid)"
         stroke="#776b58"
         strokeWidth="1"
+        vectorEffect="non-scaling-stroke"
       />
       <rect x="475" y="1232" width="110" height="40" rx="4" fill="#171314" />
-      <text x="530" y="1257" textAnchor="middle" className="rv-zone-label">
+      <ZoneLabel x={530} y={1257} scale={scale}>
         PISTA
-      </text>
+      </ZoneLabel>
     </g>
   );
 }
@@ -255,13 +310,14 @@ export function InteractiveVenueMap({
   const { items } = useReveillon();
   const viewport = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 800, height: 600 });
-  const [camera, setCamera] = useState<Camera>({ x: 535, y: 388, width: 1100 });
-  const [floor, setFloor] = useState<"lower" | "upper" | "all">("lower");
+  const [camera, setCamera] = useState<Camera>({ x: 535, y: 725, width: 1490 });
+  const [floor, setFloor] = useState<"lower" | "upper" | "all">("all");
   const pointers = useRef(new Map<number, Point>());
   const moved = useRef(false);
   const startPoint = useRef<Point | null>(null);
   const aspect = size.width / size.height;
   const height = camera.width / aspect;
+  const scale = camera.width / size.width;
 
   useEffect(() => {
     const element = viewport.current;
@@ -501,10 +557,11 @@ export function InteractiveVenueMap({
               sector={item}
               dimmed={!!sector && sector !== item.id}
               inCart={items.some((cartItem) => cartItem.sectorId === item.id)}
+              scale={scale}
               onSelect={onSelectSector}
             />
           ))}
-          <VenueLandmarks />
+          <VenueLandmarks scale={scale} />
         </svg>
         <div className="rv-map-controls">
           <button
