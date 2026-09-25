@@ -1,19 +1,10 @@
 "use client";
 
-import {
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type PointerEvent,
-} from "react";
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import {
   sectorConfig,
-  tableConfig,
-  statusLabels,
   sectorCapacity,
   type SectorId,
-  type VenueTable,
   type VenueSector,
 } from "@/data/reveillon-config";
 import { useReveillon } from "./reveillon-provider";
@@ -72,15 +63,15 @@ function VenueSectorShape({
       />
       <rect
         x={sector.x + sector.width / 2 - 48}
-        y={sector.y - 19}
+        y={sector.y + sector.height / 2 - 24}
         width="96"
-        height="38"
-        rx="6"
+        height="48"
+        rx="8"
         className="rv-sector-label-bg"
       />
       <text
         x={sector.x + sector.width / 2}
-        y={sector.y - 3}
+        y={sector.y + sector.height / 2 - 3}
         textAnchor="middle"
         className="rv-sector-label"
       >
@@ -88,7 +79,7 @@ function VenueSectorShape({
       </text>
       <text
         x={sector.x + sector.width / 2}
-        y={sector.y + 12}
+        y={sector.y + sector.height / 2 + 15}
         textAnchor="middle"
         className="rv-sector-sub"
       >
@@ -217,139 +208,6 @@ function VenueLandmarks() {
   );
 }
 
-function chairPositions(table: VenueTable): Point[] {
-  if (!table.capacity) return [];
-  if (table.shape === "round")
-    return Array.from({ length: table.capacity }, (_, i) => ({
-      x: Math.cos((i * 2 * Math.PI) / table.capacity! + Math.PI / 4) * 35,
-      y: Math.sin((i * 2 * Math.PI) / table.capacity! + Math.PI / 4) * 35,
-    }));
-  if (table.shape === "square")
-    return [
-      { x: -23, y: -23 },
-      { x: 23, y: -23 },
-      { x: -23, y: 23 },
-      { x: 23, y: 23 },
-    ];
-  const isHorizontal = table.width > table.height;
-  const ends = table.capacity % 2 ? 1 : table.capacity >= 6 ? 2 : 0;
-  const sideCount = (table.capacity - ends) / 2;
-  const long = isHorizontal ? table.width : table.height;
-  const short = isHorizontal ? table.height : table.width;
-  const points: Point[] = [];
-  for (let i = 0; i < sideCount; i++) {
-    const pos =
-      sideCount === 1
-        ? 0
-        : -long / 2 + 12 + ((long - 24) * i) / (sideCount - 1);
-    points.push({ x: -short / 2 - 9, y: pos }, { x: short / 2 + 9, y: pos });
-  }
-  if (ends) points.push({ x: 0, y: -long / 2 - 9 });
-  if (ends === 2) points.push({ x: 0, y: long / 2 + 9 });
-  return isHorizontal
-    ? points.map((point) => ({ x: point.y, y: point.x }))
-    : points;
-}
-
-function VenueTableShape({
-  table,
-  selected,
-  dimmed,
-  onSelect,
-  onHover,
-  onLeave,
-}: {
-  table: VenueTable;
-  selected: boolean;
-  dimmed: boolean;
-  onSelect: () => void;
-  onHover: (table: VenueTable, element: SVGGElement) => void;
-  onLeave: () => void;
-}) {
-  const available = table.status === "available";
-  const status = selected ? "selected" : table.status;
-  return (
-    <g
-      transform={`translate(${table.x} ${table.y})`}
-      data-table-id={table.id}
-      className={`rv-table rv-table-${status}${dimmed ? " rv-dimmed" : ""}`}
-      role="button"
-      tabIndex={available && !dimmed ? 0 : -1}
-      aria-disabled={!available || dimmed}
-      aria-label={`Mesa de referência ${table.number}, ${table.sector ? `setor ${table.sector}` : "fora dos setores"}, ${statusLabels[status]}. A compra é feita por setor.`}
-      aria-pressed={selected}
-      onPointerEnter={(event) => {
-        if (event.pointerType !== "touch") onHover(table, event.currentTarget);
-      }}
-      onPointerLeave={onLeave}
-      onFocus={(event) => onHover(table, event.currentTarget)}
-      onBlur={onLeave}
-      onClick={() => {
-        if (available && !dimmed) onSelect();
-      }}
-      onKeyDown={(event) => {
-        if (
-          (event.key === "Enter" || event.key === " ") &&
-          available &&
-          !dimmed
-        ) {
-          event.preventDefault();
-          onSelect();
-        }
-      }}
-    >
-      <title>{`Mesa ${table.number} · ${statusLabels[status]}${table.reviewNote ? ` · ${table.reviewNote}` : ""}`}</title>
-      <rect
-        x={-Math.max(34, table.width / 2 + 14)}
-        y={-Math.max(34, table.height / 2 + 14)}
-        width={Math.max(68, table.width + 28)}
-        height={Math.max(68, table.height + 28)}
-        fill="transparent"
-      />
-      <g className="rv-table-shape">
-        {chairPositions(table).map((point, i) => (
-          <circle
-            key={i}
-            cx={point.x}
-            cy={point.y}
-            r="4"
-            className="rv-chair"
-          />
-        ))}
-        {table.shape === "round" ? (
-          <circle r={table.width / 2} className="rv-table-top" />
-        ) : (
-          <rect
-            x={-table.width / 2}
-            y={-table.height / 2}
-            width={table.width}
-            height={table.height}
-            rx="3"
-            transform={table.shape === "square" ? "rotate(45)" : undefined}
-            className="rv-table-top"
-          />
-        )}
-        <text
-          textAnchor="middle"
-          dominantBaseline="central"
-          className="rv-table-number"
-        >
-          {table.number}
-        </text>
-        {table.needsReview ? (
-          <text
-            x={table.width / 2 + 2}
-            y={-table.height / 2 - 6}
-            className="rv-review-marker"
-          >
-            *
-          </text>
-        ) : null}
-      </g>
-    </g>
-  );
-}
-
 export function SectorFilter({
   selected,
   onChange,
@@ -399,11 +257,6 @@ export function InteractiveVenueMap({
   const [size, setSize] = useState({ width: 800, height: 600 });
   const [camera, setCamera] = useState<Camera>({ x: 535, y: 388, width: 1100 });
   const [floor, setFloor] = useState<"lower" | "upper" | "all">("lower");
-  const [tooltip, setTooltip] = useState<{
-    table: VenueTable;
-    x: number;
-    y: number;
-  } | null>(null);
   const pointers = useRef(new Map<number, Point>());
   const moved = useRef(false);
   const startPoint = useRef<Point | null>(null);
@@ -448,7 +301,6 @@ export function InteractiveVenueMap({
         y: floor === "lower" ? 388 : 1118,
         width: Math.max(1100, (floor === "lower" ? 790 : 685) * aspect),
       });
-    setTooltip(null);
   }, [sector, floor, aspect, size.width]);
 
   const keepInBounds = (next: Camera): Camera => ({
@@ -457,7 +309,6 @@ export function InteractiveVenueMap({
     y: clamp(next.y, 0, 1470),
   });
   function zoom(factor: number) {
-    setTooltip(null);
     setCamera((previous) =>
       keepInBounds({ ...previous, width: previous.width * factor }),
     );
@@ -472,7 +323,7 @@ export function InteractiveVenueMap({
       x: event.clientX,
       y: event.clientY,
     });
-    // Capture on the original target so a stationary tap still reaches the table.
+    // Capture on the original target so a stationary tap still reaches the sector.
     (event.target as Element).setPointerCapture(event.pointerId);
   }
   function onPointerMove(event: PointerEvent<SVGSVGElement>) {
@@ -539,16 +390,6 @@ export function InteractiveVenueMap({
         }),
       );
     }
-    if (moved.current) setTooltip(null);
-  }
-  function hover(table: VenueTable, element: SVGGElement) {
-    const bounds = element.getBoundingClientRect();
-    const parent = viewport.current!.getBoundingClientRect();
-    setTooltip({
-      table,
-      x: clamp(bounds.x + bounds.width / 2 - parent.x, 105, size.width - 105),
-      y: clamp(bounds.y - parent.y - 88, 12, size.height - 100),
-    });
   }
   const activeSector = sectorConfig.find((item) => item.id === sector);
 
@@ -558,7 +399,7 @@ export function InteractiveVenueMap({
         <div>
           <span className="rv-map-live-dot" />
           <strong>Explore o Zin</strong>
-          <span className="rv-map-top-sub">Encontre o seu lugar</span>
+          <span className="rv-map-top-sub">Encontre o seu setor</span>
         </div>
         <span className="rv-mock-pill">MAPA ILUSTRATIVO</span>
       </div>
@@ -575,7 +416,6 @@ export function InteractiveVenueMap({
             onClick={() => {
               onSectorChange(null);
               setFloor(value as typeof floor);
-              setTooltip(null);
             }}
           >
             {label}
@@ -584,7 +424,7 @@ export function InteractiveVenueMap({
       </div>
       <div className="rv-map-viewport" ref={viewport}>
         <svg
-          aria-label="Mapa interativo das mesas do Zin Bar & Restaurante. Arraste para explorar e use os controles para ampliar."
+          aria-label="Mapa interativo dos setores do Zin Bar & Restaurante. Arraste para explorar e use os controles para ampliar."
           viewBox={`${camera.x - camera.width / 2} ${camera.y - height / 2} ${camera.width} ${height}`}
           className="rv-venue-svg"
           onPointerDown={onPointerDown}
@@ -661,30 +501,10 @@ export function InteractiveVenueMap({
               sector={item}
               dimmed={!!sector && sector !== item.id}
               inCart={items.some((cartItem) => cartItem.sectorId === item.id)}
-              onSelect={(id) => {
-                setTooltip(null);
-                onSelectSector(id);
-              }}
+              onSelect={onSelectSector}
             />
           ))}
           <VenueLandmarks />
-          {tableConfig.map((table) => (
-            <VenueTableShape
-              key={table.id}
-              table={table}
-              selected={
-                !!table.sector &&
-                items.some((item) => item.sectorId === table.sector)
-              }
-              dimmed={!!sector && sector !== table.sector}
-              onSelect={() => {
-                setTooltip(null);
-                if (table.sector) onSelectSector(table.sector);
-              }}
-              onHover={hover}
-              onLeave={() => setTooltip(null)}
-            />
-          ))}
         </svg>
         <div className="rv-map-controls">
           <button
@@ -729,31 +549,6 @@ export function InteractiveVenueMap({
             </svg>
           </button>
         </div>
-        {tooltip ? (
-          <div
-            className="rv-map-tooltip"
-            role="tooltip"
-            style={{ left: tooltip.x, top: tooltip.y }}
-          >
-            <strong>
-              {tooltip.table.sector
-                ? `Setor ${tooltip.table.sector}`
-                : "Fora dos setores"}{" "}
-              <span>
-                {sectorConfig.find((s) => s.id === tooltip.table.sector)
-                  ?.name ?? ""}
-              </span>
-            </strong>
-            <span>
-              {tooltip.table.sector
-                ? sectorCapacity(tooltip.table.sector) > 0
-                  ? `${sectorCapacity(tooltip.table.sector)} lugares no setor`
-                  : "Setor esgotado nesta prévia"
-                : "Não participa da venda por setor"}
-            </span>
-            <small>Mesa {tooltip.table.number} de referência no mapa</small>
-          </div>
-        ) : null}
         <div className="rv-map-instructions">
           {activeSector
             ? `SETOR ${activeSector.id} · ${activeSector.name}`
@@ -766,16 +561,23 @@ export function InteractiveVenueMap({
         </span>
       </div>
       <div className="rv-map-legend" aria-label="Legenda do mapa">
-        {Object.entries(statusLabels).map(([status, label]) => (
-          <span key={status}>
-            <i className={`rv-legend-${status}`} />
-            {label}
-          </span>
-        ))}
+        <span>
+          <i className="rv-legend-available" />
+          Disponível
+        </span>
+        <span>
+          <i className="rv-legend-selected" />
+          Sua seleção
+        </span>
+        <span>
+          <i className="rv-legend-unavailable" />
+          Esgotado
+        </span>
       </div>
       <p className="rv-map-sector-note">
-        Estados das mesas são ilustrativos. A seleção e a compra acontecem por
-        setor — toque em qualquer ponto do setor para escolher.
+        A seleção e a compra acontecem por setor — toque em qualquer ponto do
+        setor para escolher. A mesa exata é definida pela equipe do Zin no dia
+        do evento.
       </p>
     </div>
   );

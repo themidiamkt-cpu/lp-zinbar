@@ -206,41 +206,6 @@ export function TableExperience() {
                 Sua seleção não bloqueia setores e não realiza reservas.
               </p>
             </div>
-            <details className="rv-map-review">
-              <summary>
-                Sobre a planta e mesas em revisão{" "}
-                <span aria-hidden="true">+</span>
-              </summary>
-              <p>
-                A disposição foi reconstruída a partir da planta fornecida.
-                Posições e capacidades precisam de validação final pela equipe.
-                A venda acontece por setor: a mesa exata dentro do setor
-                escolhido é definida pela equipe do Zin no dia do evento.
-              </p>
-              <ul>
-                <li>
-                  <strong>Setor C:</strong> o número 34 aparece em duas mesas.
-                  Os dois desenhos foram mantidos com identificadores internos
-                  distintos. O número 28 não aparece e não foi criado.
-                </li>
-                <li>
-                  <strong>Mesa 27, setor B:</strong> quantidade de cadeiras
-                  pouco legível; capacidade pendente.
-                </li>
-                <li>
-                  <strong>Mesas 59–62, setor I:</strong> a referência não
-                  informa cadeiras; capacidades pendentes.
-                </li>
-                <li>
-                  <strong>Mesa 100:</strong> aparece ao lado do bar, fora dos
-                  setores; setor e participação a confirmar.
-                </li>
-              </ul>
-              <p>
-                Mesas marcadas com * estão fora da capacidade vendável do
-                setor nesta prévia até a revisão.
-              </p>
-            </details>
           </div>
           <aside className="rv-desktop-cart">
             <Cart />
