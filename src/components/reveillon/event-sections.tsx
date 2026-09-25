@@ -38,12 +38,18 @@ export function ReveillonHero() {
               VER DETALHES DO EVENTO <span aria-hidden="true">↗</span>
             </a>
           </div>
+          <a className="rv-text-link rv-consult-invitations" href="/reveillon/convites">JÁ TENHO UM CÓDIGO · CONSULTAR CONVITE ↗</a>
           <p className="rv-preview-note">
             <span className="rv-small-dot" /> Prévia do evento · vendas ainda
             não abertas
           </p>
         </div>
         <div className="rv-hero-art">
+          <span className="rv-bubble" aria-hidden="true" />
+          <span className="rv-bubble" aria-hidden="true" />
+          <span className="rv-bubble" aria-hidden="true" />
+          <span className="rv-bubble" aria-hidden="true" />
+          <span className="rv-bubble" aria-hidden="true" />
           <div className="rv-photo-frame">
             <Image
               src="/images/real/ambiente-casa-cheia.jpg"
@@ -72,6 +78,14 @@ export function ReveillonHero() {
             <span>UM NOVO CICLO</span>
             <strong>27</strong>
             <span>UM NOVO BRINDE</span>
+          </div>
+          <div className="rv-photo-detail-secondary">
+            <Image
+              src="/images/real/prato-salmao-risoto.jpg"
+              alt="Um detalhe da gastronomia do Zin; fotografia ilustrativa"
+              fill
+              sizes="(max-width: 767px) 120px, 210px"
+            />
           </div>
           <span className="rv-photo-caption">TAQUARAL · CAMPINAS</span>
         </div>
@@ -183,32 +197,88 @@ export function HowItWorks() {
 
 export function EventInfo() {
   return (
-    <section id="evento" className="rv-section rv-event-info">
-      <Container>
-        <div className="rv-section-heading">
-          <div>
-            <p className="rv-eyebrow">CADA DETALHE DA SUA NOITE</p>
-            <h2 className="rv-title">
-              Para você <em>se programar.</em>
-            </h2>
-          </div>
-          <p>
-            Estamos preparando uma virada especial.
+    <>
+      <section className="rv-campaign-photo" aria-label="A atmosfera do Zin">
+        <Image
+          src="/images/real/ambiente-casa-cheia.jpg"
+          alt="A atmosfera acolhedora do Zin Bar & Restaurante"
+          fill
+          sizes="100vw"
+        />
+        <div className="rv-campaign-photo-shade" />
+        <Container className="rv-campaign-photo-copy">
+          <p className="rv-eyebrow">BONS ENCONTROS. NOVAS MEMÓRIAS.</p>
+          <h2>
+            Uma noite
             <br />
-            Os detalhes serão confirmados em breve.
-          </p>
-        </div>
-        <div className="rv-info-grid">
-          {eventConfig.info.map(([label, title, detail]) => (
-            <article key={label}>
-              <p className="rv-overline">{label}</p>
-              <h3>{title}</h3>
-              <p>{detail}</p>
+            para <em>lembrar.</em>
+          </h2>
+          <span aria-hidden="true">✧</span>
+          <p>Zin Bar & Restaurante · Réveillon 2027</p>
+        </Container>
+      </section>
+      <section id="evento" className="rv-section rv-event-info">
+        <Container>
+          <div className="rv-section-heading">
+            <div>
+              <p className="rv-eyebrow">CADA DETALHE DA SUA NOITE</p>
+              <h2 className="rv-title">
+                Para você <em>se programar.</em>
+              </h2>
+            </div>
+            <p>
+              Estamos preparando uma virada especial.
+              <br />
+              Os detalhes serão confirmados em breve.
+            </p>
+          </div>
+          <div className="rv-event-editorial">
+            <article>
+              <Icon name="calendar" />
+              <p className="rv-overline">DATA & HORÁRIO</p>
+              <h3>
+                O começo
+                <br />
+                <em>de um novo ano.</em>
+              </h3>
+              <p>{eventConfig.date}</p>
+              <p>{eventConfig.time}</p>
             </article>
-          ))}
-        </div>
-      </Container>
-    </section>
+            <article>
+              <Icon name="mapPin" />
+              <p className="rv-overline">LOCAL</p>
+              <h3>
+                O seu encontro.
+                <br />
+                <em>No Zin.</em>
+              </h3>
+              <p>{eventConfig.info[2][1]}</p>
+              <p>{eventConfig.info[2][2]}</p>
+            </article>
+            <article>
+              <Icon name="glass" />
+              <p className="rv-overline">O QUE ESPERAR</p>
+              <h3>
+                Bons momentos.
+                <br />
+                <em>Novas memórias.</em>
+              </h3>
+              <p>{eventConfig.info[3][1]}</p>
+              <p>{eventConfig.info[3][2]}</p>
+            </article>
+          </div>
+          <div className="rv-info-grid">
+            {eventConfig.info.slice(4).map(([label, title, detail]) => (
+              <article key={label}>
+                <p className="rv-overline">{label}</p>
+                <h3>{title}</h3>
+                <p>{detail}</p>
+              </article>
+            ))}
+          </div>
+        </Container>
+      </section>
+    </>
   );
 }
 
@@ -245,6 +315,11 @@ export function ReveillonCTA() {
     <section className="rv-section rv-final-section">
       <Container>
         <div className="rv-final-cta">
+          <span className="rv-bubble" aria-hidden="true" />
+          <span className="rv-bubble" aria-hidden="true" />
+          <span className="rv-bubble" aria-hidden="true" />
+          <span className="rv-bubble" aria-hidden="true" />
+          <span className="rv-bubble" aria-hidden="true" />
           <span className="rv-cta-star" aria-hidden="true">
             ✧
           </span>

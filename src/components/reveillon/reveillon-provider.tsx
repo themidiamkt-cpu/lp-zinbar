@@ -9,7 +9,12 @@ import {
 } from "react";
 import { validCartItems, type CartItem } from "@/data/reveillon-config";
 
+import { createInvitations, readInvitations, INVITATIONS_KEY, INVITATION_BATCH_KEY, type MockInvitation } from "./mock-invitations";
+
 type SelectionContext = {
+  invitations: MockInvitation[];
+  orderInvitations: MockInvitation[];
+  invitationsSaved: boolean;
   items: CartItem[];
   order: CartItem[] | null;
   ready: boolean;
@@ -24,6 +29,9 @@ const ORDER_KEY = "zin-reveillon-preview-order-v1";
 export function ReveillonProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [order, setOrder] = useState<CartItem[] | null>(null);
+  const [invitations, setInvitations] = useState<MockInvitation[]>([]);
+  const [batch, setBatch] = useState<string | null>(null);
+  const [invitationsSaved, setInvitationsSaved] = useState(true);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -38,6 +46,10 @@ export function ReveillonProvider({ children }: { children: ReactNode }) {
     } catch {
       /* Navegação privada/armazenamento indisponível: manter estado apenas em memória. */
     }
+    try {
+      setInvitations(readInvitations(JSON.parse(localStorage.getItem(INVITATIONS_KEY) || "[]")));
+      setBatch(sessionStorage.getItem(INVITATION_BATCH_KEY));
+    } catch { setInvitationsSaved(false); }
     setReady(true);
   }, []);
 
@@ -60,9 +72,21 @@ export function ReveillonProvider({ children }: { children: ReactNode }) {
   }
 
   function completeMock() {
+    if (!items.length) return;
+    let previous = invitations;
+    try { previous = readInvitations(JSON.parse(localStorage.getItem(INVITATIONS_KEY) || "[]")); } catch { /* Usar os convites em memória. */ }
+    const generated = createInvitations(items, previous);
+    const next = [...previous, ...generated.invitations];
+    setInvitations(next);
+    setBatch(generated.batch);
+    try {
+      localStorage.setItem(INVITATIONS_KEY, JSON.stringify(next));
+      setInvitationsSaved(true);
+    } catch { setInvitationsSaved(false); }
     setOrder(items);
     try {
       sessionStorage.setItem(ORDER_KEY, JSON.stringify(items));
+      sessionStorage.setItem(INVITATION_BATCH_KEY, generated.batch);
     } catch {
       /* Opcional. */
     }
@@ -72,6 +96,9 @@ export function ReveillonProvider({ children }: { children: ReactNode }) {
   return (
     <Context.Provider
       value={{
+        invitations,
+        orderInvitations: invitations.filter(item => item.batch === batch),
+        invitationsSaved,
         items,
         order,
         ready,

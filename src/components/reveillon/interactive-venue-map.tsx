@@ -412,9 +412,9 @@ export function InteractiveVenueMap({
       setCamera({ x: 535, y: 725, width: Math.max(1100, 1490 * aspect) });
     else if (size.width < 500)
       setCamera({
-        x: 210,
-        y: (floor === "lower" ? 0 : 785) + 210 / aspect,
-        width: 420,
+        x: 225,
+        y: (floor === "lower" ? 0 : 785) + 240 / aspect,
+        width: 480,
       });
     else
       setCamera({
@@ -729,6 +729,10 @@ export function InteractiveVenueMap({
             : "ARRASTE PARA EXPLORAR"}
           <span>Use + / − ou dois dedos para ampliar</span>
         </div>
+        <span className="rv-map-edge-fade rv-map-edge-fade-left" aria-hidden="true" />
+        <span className="rv-map-edge-fade rv-map-edge-fade-right" aria-hidden="true">
+          <span className="rv-map-edge-chevron">›</span>
+        </span>
       </div>
       <div className="rv-map-legend" aria-label="Legenda do mapa">
         {Object.entries(statusLabels).map(([status, label]) => (

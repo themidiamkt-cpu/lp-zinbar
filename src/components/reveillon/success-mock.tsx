@@ -9,11 +9,12 @@ import {
   type CartItem,
 } from "@/data/reveillon-config";
 import { useReveillon } from "./reveillon-provider";
+import { InvitationLinks } from "./invitation-preview";
 import { CartItems } from "./cart";
 
 const example: CartItem[] = [{ tableId: "A-14", quantity: 2 }];
 export function SuccessMock() {
-  const { order, ready } = useReveillon();
+  const { order, ready, orderInvitations, invitationsSaved } = useReveillon();
   const summary = order?.length ? order : example;
   if (!ready)
     return (
@@ -66,12 +67,19 @@ export function SuccessMock() {
         <div className="rv-ticket-bottom">
           <Icon name="glass" />
           <div>
-            <strong>Estamos preparando seus convites.</strong>
-            <p>Mensagem ilustrativa. Nenhum convite ou QR Code será emitido.</p>
+            <strong>{orderInvitations.length ? `${orderInvitations.length} convites demonstrativos prontos.` : "Seus convites aparecem após concluir uma simulação."}</strong>
+            <p>Um código por lugar. Sem validade de entrada.</p>
           </div>
         </div>
       </div>
-      <Link href="/reveillon" className="rv-button">
+      {orderInvitations.length > 0 && <section className="rv-success-invitations" aria-label="Seus convites demonstrativos">
+        <h2 className="rv-invitation-subtitle">Um lugar. Um convite.</h2>
+        <InvitationLinks invitations={orderInvitations}/>
+        <p className="rv-fine-print">Salvos neste navegador. Abra cada convite para consultar seu código individual.</p>
+      </section>}
+      {!invitationsSaved && <p role="alert" className="rv-demo-banner">Não foi possível salvar os convites neste navegador. Eles ficarão disponíveis apenas nesta sessão aberta.</p>}
+      <Link href="/reveillon/convites" className="rv-button">CONSULTAR MEUS CONVITES →</Link>
+      <Link href="/reveillon" className="rv-text-link">
         VOLTAR AO RÉVEILLON <span aria-hidden="true">→</span>
       </Link>
     </Container>

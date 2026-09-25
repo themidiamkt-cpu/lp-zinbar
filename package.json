@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "next": "^15.2.4",
+    "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "autoprefixer": "^10.4.20",
@@ -25,4 +27,3 @@
     "typescript": "^5.8.2"
   }
 }
-
