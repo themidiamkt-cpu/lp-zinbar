@@ -8,8 +8,8 @@ Fonte de verdade: `reveillon-visual-spec-zin.md`. Referência estrutural local: 
 - `/reveillon/checkout`: formulário com validação local e resumo da seleção.
 - `/reveillon/sucesso`: confirmação explicitamente demonstrativa, com resumo da simulação ou exemplo ao acessar diretamente.
 - Identidade existente: preto, vinho, champagne, tipografia serifada e fotos da casa. Header, logo e footer têm uma opção de evento; o comportamento padrão da home permanece preservado.
-- Nenhum endpoint, banco, pagamento, webhook, reserva, QR Code, envio de convite ou evento de analytics foi adicionado. O layout global já existente continua responsável pelos scripts que o site já tinha.
-- O formulário não envia nem persiste dados pessoais. Apenas IDs e quantidades de mesas ficam no `sessionStorage` da aba, com validação de capacidade e disponibilidade mockada.
+- Nenhum endpoint, banco, pagamento real, webhook, reserva real, envio de convite ou evento de analytics foi adicionado. Os convites e seus QR Codes são demonstrativos, sem validação de entrada. O layout global já existente continua responsável pelos scripts que o site já tinha.
+- O formulário não envia nem persiste dados pessoais. IDs e quantidades ficam no `sessionStorage` da aba, com validação de capacidade e disponibilidade mockada. Os convites individuais (código, lote, mesa, posição e data de criação) ficam no `localStorage`, sem dados pessoais.
 
 ## Mapa
 
@@ -66,3 +66,9 @@ Build de produção (`next build`) aprovado em 25/09/2026 em cópia temporária 
 Revisão visual e fluxo de seleção → carrinho → checkout → sucesso em Chromium nas larguras 320, 375, 390, 430, 768, 1024, 1440 e 1920 px, incluindo ausência de overflow horizontal e modal dentro da tela.
 
 Verificados também: filtros A–N; tooltip; teclado e Escape; capacidade máxima; edição sem duplicação; remoção; recarga da sessão; mesas indisponíveis; lista por setor; vista do mezanino; checkout vazio; sucesso acessado diretamente; gestos de pinça e pan por eventos de toque; seleção por toque; validação do telefone; ausência de persistência de dados pessoais; preservação da home. Emulação de viewport e toque não substitui teste em aparelhos físicos ou Safari iOS.
+
+## Convites demonstrativos
+
+Após autorização do usuário, cada lugar gera um convite com código único. Quatro lugares geram quatro convites. `/reveillon/convites` lista os convites salvos e consulta códigos; `/reveillon/convite/[codigo]` permite reabrir cada convite diretamente. Recarga não gera novos códigos. Simulações antigas salvas na aba recebem os convites ao reabrir a página.
+
+Os códigos só existem no navegador e endereço onde foram gerados. Limpar os dados do site remove os convites; eles não migram do localhost para o deploy nem entre aparelhos. Códigos desconhecidos têm estado de não encontrado. Não há pagamento, reserva, envio por e-mail ou controle real de entrada.

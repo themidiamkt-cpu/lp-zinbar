@@ -38,7 +38,12 @@ export function ReveillonHero() {
               VER DETALHES DO EVENTO <span aria-hidden="true">↗</span>
             </a>
           </div>
-          <a className="rv-text-link rv-consult-invitations" href="/reveillon/convites">JÁ TENHO UM CÓDIGO · CONSULTAR CONVITE ↗</a>
+          <a
+            className="rv-text-link rv-consult-invitations"
+            href="/reveillon/convites"
+          >
+            JÁ TENHO UM CÓDIGO · CONSULTAR CONVITE ↗
+          </a>
           <p className="rv-preview-note">
             <span className="rv-small-dot" /> Prévia do evento · vendas ainda
             não abertas

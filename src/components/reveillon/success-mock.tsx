@@ -67,18 +67,37 @@ export function SuccessMock() {
         <div className="rv-ticket-bottom">
           <Icon name="glass" />
           <div>
-            <strong>{orderInvitations.length ? `${orderInvitations.length} convites demonstrativos prontos.` : "Seus convites aparecem após concluir uma simulação."}</strong>
+            <strong>
+              {orderInvitations.length
+                ? `${orderInvitations.length} convites demonstrativos prontos.`
+                : "Seus convites aparecem após concluir uma simulação."}
+            </strong>
             <p>Um código por lugar. Sem validade de entrada.</p>
           </div>
         </div>
       </div>
-      {orderInvitations.length > 0 && <section className="rv-success-invitations" aria-label="Seus convites demonstrativos">
-        <h2 className="rv-invitation-subtitle">Um lugar. Um convite.</h2>
-        <InvitationLinks invitations={orderInvitations}/>
-        <p className="rv-fine-print">Salvos neste navegador. Abra cada convite para consultar seu código individual.</p>
-      </section>}
-      {!invitationsSaved && <p role="alert" className="rv-demo-banner">Não foi possível salvar os convites neste navegador. Eles ficarão disponíveis apenas nesta sessão aberta.</p>}
-      <Link href="/reveillon/convites" className="rv-button">CONSULTAR MEUS CONVITES →</Link>
+      {orderInvitations.length > 0 && (
+        <section
+          className="rv-success-invitations"
+          aria-label="Seus convites demonstrativos"
+        >
+          <h2 className="rv-invitation-subtitle">Um lugar. Um convite.</h2>
+          <InvitationLinks invitations={orderInvitations} />
+          <p className="rv-fine-print">
+            Salvos neste navegador. Abra cada convite para consultar seu código
+            individual.
+          </p>
+        </section>
+      )}
+      {!invitationsSaved && (
+        <p role="alert" className="rv-demo-banner">
+          Não foi possível salvar os convites neste navegador. Eles ficarão
+          disponíveis apenas nesta sessão aberta.
+        </p>
+      )}
+      <Link href="/reveillon/convites" className="rv-button">
+        CONSULTAR MEUS CONVITES →
+      </Link>
       <Link href="/reveillon" className="rv-text-link">
         VOLTAR AO RÉVEILLON <span aria-hidden="true">→</span>
       </Link>
