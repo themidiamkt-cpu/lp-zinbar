@@ -12,7 +12,7 @@ import { useReveillon } from "./reveillon-provider";
 import { InvitationLinks } from "./invitation-preview";
 import { CartItems } from "./cart";
 
-const example: CartItem[] = [{ tableId: "A-14", quantity: 2 }];
+const example: CartItem[] = [{ sectorId: "A", quantity: 2 }];
 export function SuccessMock() {
   const { order, ready, orderInvitations, invitationsSaved } = useReveillon();
   const summary = order?.length ? order : example;

@@ -10,7 +10,7 @@ export function HeaderSection({ event = false }: { event?: boolean }) {
   const links = event
     ? [
         { label: "A experiência", href: "/reveillon#experiencia" },
-        { label: "Escolha sua mesa", href: "/reveillon#mesas" },
+        { label: "Escolha seu setor", href: "/reveillon#mesas" },
         { label: "O evento", href: "/reveillon#evento" },
         { label: "Dúvidas", href: "/reveillon#faq" },
       ]
@@ -60,7 +60,7 @@ export function HeaderSection({ event = false }: { event?: boolean }) {
               external={event ? false : actions.reservation.external}
               className="px-3 text-sm sm:px-5 sm:text-base"
             >
-              {event ? "Mesas" : actions.reservation.shortLabel}
+              {event ? "Setores" : actions.reservation.shortLabel}
             </ButtonLink>
             <ButtonLink
               href={actions.directions.href}

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/container";
-import { eventConfig, tableConfig } from "@/data/reveillon-config";
+import { eventConfig, sectorConfig } from "@/data/reveillon-config";
 import { useReveillon } from "./reveillon-provider";
 import {
   normalizeInvitationCode,
@@ -20,7 +20,7 @@ export function InvitationLinks({
   return (
     <ul className="rv-invitation-list">
       {invitations.map((invitation) => {
-        const table = tableConfig.find((t) => t.id === invitation.tableId)!;
+        const sector = sectorConfig.find((s) => s.id === invitation.sectorId)!;
         return (
           <li key={invitation.code}>
             <Link href={`/reveillon/convite/${invitation.code}`}>
@@ -29,9 +29,9 @@ export function InvitationLinks({
               </span>
               <span>
                 <strong>
-                  Mesa {table.number} · Convite {invitation.guest}
+                  Setor {sector.id} · Convite {invitation.guest}
                 </strong>
-                <small>Setor {table.sector} · 1 pessoa</small>
+                <small>{sector.name} · 1 pessoa</small>
                 <code>{invitation.code}</code>
               </span>
               <span aria-hidden="true">↗</span>
@@ -159,7 +159,7 @@ export function InvitationPreview({ code }: { code: string }) {
         </Link>
       </Container>
     );
-  const table = tableConfig.find((t) => t.id === invitation.tableId)!;
+  const sector = sectorConfig.find((s) => s.id === invitation.sectorId)!;
   async function copy() {
     try {
       await navigator.clipboard.writeText(invitation!.code);
@@ -190,9 +190,9 @@ export function InvitationPreview({ code }: { code: string }) {
         <div className="rv-invitation-perforation" aria-hidden="true" />
         <div className="rv-invitation-body">
           <p className="rv-overline">CONVITE INDIVIDUAL · 1 PESSOA</p>
-          <h2>Mesa {table.number}</h2>
+          <h2>Setor {sector.id}</h2>
           <p className="rv-invitation-place">
-            Setor {table.sector} · Convite {invitation.guest}
+            {sector.name} · Convite {invitation.guest}
           </p>
           <dl className="rv-invitation-details">
             <div>
@@ -223,8 +223,9 @@ export function InvitationPreview({ code }: { code: string }) {
             DEMONSTRATIVO · SEM VALIDADE DE ENTRADA
           </p>
           <p className="rv-fine-print">
-            Não representa pagamento, reserva ou ingresso real. O QR Code é
-            ilustrativo e não é validado na entrada.
+            A mesa exata dentro do setor é definida pela equipe do Zin no dia
+            do evento. Não representa pagamento, reserva ou ingresso real. O
+            QR Code é ilustrativo e não é validado na entrada.
           </p>
         </div>
       </article>

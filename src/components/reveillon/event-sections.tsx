@@ -33,7 +33,7 @@ export function ReveillonHero() {
             <br />O seu lugar à mesa, em uma noite para celebrar.
           </p>
           <div className="rv-hero-actions">
-            <ButtonLink href="#mesas">ESCOLHER MINHA MESA</ButtonLink>
+            <ButtonLink href="#mesas">ESCOLHER MEU SETOR</ButtonLink>
             <a className="rv-text-link" href="#evento">
               VER DETALHES DO EVENTO <span aria-hidden="true">↗</span>
             </a>
@@ -154,7 +154,7 @@ export function EventHighlights() {
 
 export function HowItWorks() {
   const steps = [
-    ["01", "Escolha sua mesa", "Explore os ambientes e encontre o seu lugar."],
+    ["01", "Escolha seu setor", "Explore os ambientes e encontre o seu lugar."],
     [
       "02",
       "Selecione seus lugares",
@@ -335,11 +335,11 @@ export function ReveillonCTA() {
             <em>começa aqui.</em>
           </h2>
           <p>
-            Escolha sua mesa e prepare-se para viver
+            Escolha seu setor e prepare-se para viver
             <br />
             uma noite especial no Zin.
           </p>
-          <ButtonLink href="#mesas">ESCOLHER MINHA MESA</ButtonLink>
+          <ButtonLink href="#mesas">ESCOLHER MEU SETOR</ButtonLink>
           <span className="rv-cta-year" aria-hidden="true">
             2027
           </span>

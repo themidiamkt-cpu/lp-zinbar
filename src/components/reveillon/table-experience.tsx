@@ -4,16 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/container";
 import { Icon } from "@/components/icons";
 import {
-  tableConfig,
   sectorConfig,
-  statusLabels,
+  sectorCapacity,
   formatMoney,
   getCartTotal,
   type SectorId,
-  type VenueTable,
 } from "@/data/reveillon-config";
 import { InteractiveVenueMap, SectorFilter } from "./interactive-venue-map";
-import { TableSelectionModal } from "./table-selection-modal";
+import { SectorSelectionModal } from "./table-selection-modal";
 import { Cart } from "./cart";
 import { Dialog } from "./dialog";
 import { useReveillon } from "./reveillon-provider";
@@ -21,17 +19,16 @@ import { useReveillon } from "./reveillon-provider";
 export function TableExperience() {
   const { items } = useReveillon();
   const [sector, setSector] = useState<SectorId | null>(null);
-  const [selectedTable, setSelectedTable] = useState<VenueTable | null>(null);
-  const [focusedTable, setFocusedTable] = useState<VenueTable | null>(null);
+  const [selectedSector, setSelectedSector] = useState<SectorId | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [view, setView] = useState<"map" | "list">("map");
   const [onlyAvailable, setOnlyAvailable] = useState(false);
   const [mapReached, setMapReached] = useState(false);
   const section = useRef<HTMLElement>(null);
-  const tables = tableConfig.filter(
-    (table) =>
-      (!sector || table.sector === sector) &&
-      (!onlyAvailable || table.status === "available"),
+  const sectors = sectorConfig.filter(
+    (item) =>
+      (!sector || item.id === sector) &&
+      (!onlyAvailable || sectorCapacity(item.id) > 0),
   );
   const quantity = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -48,13 +45,11 @@ export function TableExperience() {
 
   function changeSector(id: SectorId | null) {
     setSector(id);
-    setFocusedTable(null);
   }
-  function chooseFromList(table: VenueTable) {
-    setFocusedTable(table);
-    setSector(table.sector);
+  function chooseSector(id: SectorId) {
+    setSector(id);
     setView("map");
-    setSelectedTable(table);
+    setSelectedSector(id);
   }
 
   return (
@@ -75,8 +70,8 @@ export function TableExperience() {
           </div>
           <div>
             <p>
-              Explore os ambientes, encontre sua mesa
-              <br />e escolha quem vai brindar com você.
+              Explore os ambientes, encontre seu setor
+              <br />e escolha quantos vão brindar com você.
             </p>
             <span className="rv-section-meta">
               14 SETORES <span>·</span> DIFERENTES FORMAS DE VIVER O ZIN
@@ -92,7 +87,7 @@ export function TableExperience() {
             <div
               className="rv-view-switch"
               role="group"
-              aria-label="Forma de encontrar mesas"
+              aria-label="Forma de encontrar um setor"
             >
               <button
                 type="button"
@@ -106,23 +101,22 @@ export function TableExperience() {
                 aria-pressed={view === "list"}
                 onClick={() => setView("list")}
               >
-                <Icon name="menu" /> Encontrar uma mesa
+                <Icon name="menu" /> Encontrar um setor
               </button>
             </div>
             <div hidden={view !== "map"}>
               <InteractiveVenueMap
                 sector={sector}
                 onSectorChange={changeSector}
-                focusedTable={focusedTable}
-                onSelect={setSelectedTable}
+                onSelectSector={setSelectedSector}
               />
             </div>
             {view === "list" ? (
               <div className="rv-table-finder">
                 <div className="rv-finder-header">
                   <div>
-                    <h3>Encontrar uma mesa</h3>
-                    <p>Escolha um setor e toque em uma mesa.</p>
+                    <h3>Encontrar um setor</h3>
+                    <p>Escolha um setor disponível para ver os detalhes.</p>
                   </div>
                   <label htmlFor="rv-sector-select">
                     Setor
@@ -150,59 +144,57 @@ export function TableExperience() {
                     checked={onlyAvailable}
                     onChange={(event) => setOnlyAvailable(event.target.checked)}
                   />
-                  <span>Mostrar somente mesas disponíveis</span>
+                  <span>Mostrar somente setores disponíveis</span>
                 </label>
                 <p className="rv-fine-print" role="status">
-                  {tables.length} mesas nesta visualização
+                  {sectors.length} setores nesta visualização
                 </p>
                 <div className="rv-table-list">
-                  {tables.length === 0 ? (
+                  {sectors.length === 0 ? (
                     <p className="rv-muted">
-                      Nenhuma mesa disponível neste setor. Escolha outro setor
-                      ou desmarque o filtro de disponibilidade.
+                      Nenhum setor disponível com este filtro. Desmarque o
+                      filtro de disponibilidade.
                     </p>
                   ) : null}
-                  {tables.map((table) => (
-                    <button
-                      key={table.id}
-                      type="button"
-                      data-list-table={table.id}
-                      className={
-                        items.some((item) => item.tableId === table.id)
-                          ? "rv-list-table rv-list-table-selected"
-                          : "rv-list-table"
-                      }
-                      disabled={table.status !== "available"}
-                      onClick={() => chooseFromList(table)}
-                    >
-                      <span className="rv-list-table-number">
-                        {table.number}
-                      </span>
-                      <span>
-                        <strong>
-                          Mesa {table.number}
-                          {table.needsReview ? " *" : ""}
-                        </strong>
-                        <small>
-                          {table.sector
-                            ? `Setor ${table.sector}`
-                            : "Setor a confirmar"}{" "}
-                          ·{" "}
-                          {table.capacity
-                            ? `${table.capacity} lugares`
-                            : "Capacidade a confirmar"}
-                        </small>
-                      </span>
-                      <span className="rv-list-table-status">
-                        {items.some((item) => item.tableId === table.id)
-                          ? "Sua seleção"
-                          : statusLabels[table.status]}
-                        <span aria-hidden="true">
-                          {table.status === "available" ? "↗" : "—"}
+                  {sectors.map((item) => {
+                    const capacity = sectorCapacity(item.id);
+                    const inCart = items.some(
+                      (cartItem) => cartItem.sectorId === item.id,
+                    );
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        data-list-sector={item.id}
+                        className={
+                          inCart
+                            ? "rv-list-table rv-list-table-selected"
+                            : "rv-list-table"
+                        }
+                        disabled={capacity <= 0}
+                        onClick={() => chooseSector(item.id)}
+                      >
+                        <span className="rv-list-table-number">
+                          {item.id}
                         </span>
-                      </span>
-                    </button>
-                  ))}
+                        <span>
+                          <strong>Setor {item.id}</strong>
+                          <small>
+                            {item.name} ·{" "}
+                            {capacity > 0
+                              ? `${capacity} lugares`
+                              : "Esgotado nesta prévia"}
+                          </small>
+                        </span>
+                        <span className="rv-list-table-status">
+                          {inCart ? "Sua seleção" : capacity > 0 ? "Disponível" : "Esgotado"}
+                          <span aria-hidden="true">
+                            {capacity > 0 ? "↗" : "—"}
+                          </span>
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             ) : null}
@@ -211,7 +203,7 @@ export function TableExperience() {
               <p>
                 Preços e disponibilidade são demonstrativos.
                 <br />
-                Sua seleção não bloqueia mesas e não realiza reservas.
+                Sua seleção não bloqueia setores e não realiza reservas.
               </p>
             </div>
             <details className="rv-map-review">
@@ -222,6 +214,8 @@ export function TableExperience() {
               <p>
                 A disposição foi reconstruída a partir da planta fornecida.
                 Posições e capacidades precisam de validação final pela equipe.
+                A venda acontece por setor: a mesa exata dentro do setor
+                escolhido é definida pela equipe do Zin no dia do evento.
               </p>
               <ul>
                 <li>
@@ -243,8 +237,8 @@ export function TableExperience() {
                 </li>
               </ul>
               <p>
-                Mesas marcadas com * estão indisponíveis nesta prévia até a
-                revisão.
+                Mesas marcadas com * estão fora da capacidade vendável do
+                setor nesta prévia até a revisão.
               </p>
             </details>
           </div>
@@ -271,11 +265,11 @@ export function TableExperience() {
             </button>
           </div>
         ) : null}
-        {selectedTable ? (
-          <TableSelectionModal
-            key={selectedTable.id}
-            table={selectedTable}
-            onClose={() => setSelectedTable(null)}
+        {selectedSector ? (
+          <SectorSelectionModal
+            key={selectedSector}
+            sectorId={selectedSector}
+            onClose={() => setSelectedSector(null)}
           />
         ) : null}
         {cartOpen ? (

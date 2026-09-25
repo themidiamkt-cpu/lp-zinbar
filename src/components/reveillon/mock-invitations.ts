@@ -1,5 +1,6 @@
 import {
-  tableConfig,
+  sectorConfig,
+  sectorCapacity,
   validCartItems,
   type CartItem,
 } from "@/data/reveillon-config";
@@ -7,7 +8,7 @@ import {
 export type MockInvitation = {
   code: string;
   batch: string;
-  tableId: string;
+  sectorId: string;
   guest: number;
   createdAt: string;
 };
@@ -21,16 +22,18 @@ export function readInvitations(value: unknown): MockInvitation[] {
   const seen = new Set<string>();
   return value.filter((item): item is MockInvitation => {
     if (!item || typeof item !== "object") return false;
-    const table = tableConfig.find((t) => t.id === item.tableId);
+    const sector = sectorConfig.find((s) => s.id === item.sectorId);
+    const capacity = sector ? sectorCapacity(sector.id) : 0;
     if (
       typeof item.code !== "string" ||
       !/^ZIN-2027-[A-F0-9]{12}$/.test(item.code) ||
       seen.has(item.code) ||
       typeof item.batch !== "string" ||
-      !table?.capacity ||
+      !sector ||
+      capacity < 1 ||
       !Number.isInteger(item.guest) ||
       item.guest < 1 ||
-      item.guest > table.capacity ||
+      item.guest > capacity ||
       typeof item.createdAt !== "string" ||
       !Number.isFinite(Date.parse(item.createdAt))
     )
@@ -53,7 +56,7 @@ export function createInvitations(
         code = `ZIN-2027-${crypto.randomUUID().replaceAll("-", "").slice(0, 12).toUpperCase()}`;
       } while (used.has(code));
       used.add(code);
-      return { code, batch, tableId: item.tableId, guest: i + 1, createdAt };
+      return { code, batch, sectorId: item.sectorId, guest: i + 1, createdAt };
     }),
   );
   return { batch, invitations };

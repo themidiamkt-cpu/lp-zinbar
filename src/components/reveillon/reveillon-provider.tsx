@@ -24,8 +24,8 @@ type SelectionContext = {
   items: CartItem[];
   order: CartItem[] | null;
   ready: boolean;
-  setTable: (tableId: string, quantity: number) => void;
-  removeTable: (tableId: string) => void;
+  setSectorSelection: (sectorId: string, quantity: number) => void;
+  removeSector: (sectorId: string) => void;
   completeMock: () => void;
 };
 const Context = createContext<SelectionContext | null>(null);
@@ -85,11 +85,11 @@ export function ReveillonProvider({ children }: { children: ReactNode }) {
     }
   }, [items, ready]);
 
-  function setTable(tableId: string, quantity: number) {
+  function setSectorSelection(sectorId: string, quantity: number) {
     setItems((previous) =>
       validCartItems([
-        ...previous.filter((item) => item.tableId !== tableId),
-        { tableId, quantity },
+        ...previous.filter((item) => item.sectorId !== sectorId),
+        { sectorId, quantity },
       ]),
     );
   }
@@ -133,10 +133,10 @@ export function ReveillonProvider({ children }: { children: ReactNode }) {
         items,
         order,
         ready,
-        setTable,
-        removeTable: (id) =>
+        setSectorSelection,
+        removeSector: (id) =>
           setItems((previous) =>
-            previous.filter((item) => item.tableId !== id),
+            previous.filter((item) => item.sectorId !== id),
           ),
         completeMock,
       }}

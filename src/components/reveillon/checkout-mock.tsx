@@ -32,19 +32,19 @@ export function CheckoutMock() {
           O primeiro passo é<br />
           <em>escolher seu lugar.</em>
         </h1>
-        <p>Seu carrinho está vazio. Explore os setores e selecione uma mesa.</p>
+        <p>Seu carrinho está vazio. Explore os setores e escolha o seu.</p>
         <Link href="/reveillon#mesas" className="rv-button">
-          ESCOLHER MINHA MESA →
+          ESCOLHER MEU SETOR →
         </Link>
       </Container>
     );
   return (
     <Container className="rv-flow-page">
       <Link href="/reveillon#mesas" className="rv-back-link">
-        ← Voltar para as mesas
+        ← Voltar para os setores
       </Link>
       <div className="rv-flow-steps">
-        <span>01 · Sua mesa</span>
+        <span>01 · Seu setor</span>
         <b>02 · Seus dados</b>
         <span>03 · Confirmação</span>
       </div>

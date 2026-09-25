@@ -4,50 +4,50 @@ import { useState } from "react";
 import {
   eventConfig,
   formatMoney,
-  type VenueTable,
+  sectorConfig,
+  sectorCapacity,
+  type SectorId,
 } from "@/data/reveillon-config";
 import { Dialog } from "./dialog";
 import { useReveillon } from "./reveillon-provider";
 
-export function TableSelectionModal({
-  table,
+export function SectorSelectionModal({
+  sectorId,
   onClose,
 }: {
-  table: VenueTable;
+  sectorId: SectorId;
   onClose: () => void;
 }) {
-  const { items, setTable } = useReveillon();
-  const existing = items.find((item) => item.tableId === table.id);
+  const { items, setSectorSelection } = useReveillon();
+  const sector = sectorConfig.find((entry) => entry.id === sectorId)!;
+  const capacity = sectorCapacity(sectorId);
+  const existing = items.find((item) => item.sectorId === sectorId);
   const [quantity, setQuantity] = useState(
-    existing?.quantity ?? Math.min(2, table.capacity ?? 1),
+    existing?.quantity ?? Math.min(2, capacity || 1),
   );
-  const available = table.status === "available" && table.capacity !== null;
+  const available = capacity > 0;
   return (
     <Dialog
-      titleId="table-modal-title"
+      titleId="sector-modal-title"
       onClose={onClose}
       className="rv-table-dialog"
     >
-      <p className="rv-eyebrow">
-        {table.sector ? `SETOR ${table.sector}` : "SALÃO · SETOR A CONFIRMAR"}
-      </p>
+      <p className="rv-eyebrow">{sector.name.toUpperCase()}</p>
       <div className="rv-modal-table-art" aria-hidden="true">
-        <span className={`rv-mini-table ${table.shape}`}>{table.number}</span>
+        <span className="rv-mini-table round">{sector.id}</span>
       </div>
-      <h2 id="table-modal-title">Mesa {table.number}</h2>
+      <h2 id="sector-modal-title">Setor {sector.id}</h2>
       <p className="rv-muted">
-        {table.capacity === null
-          ? "Capacidade a confirmar"
-          : `${table.capacity} lugares${available ? " disponíveis" : " na referência"}`}
+        {available
+          ? `${capacity} lugares disponíveis no setor`
+          : "Setor esgotado nesta prévia"}
       </p>
-      {table.needsReview ? (
-        <p className="rv-review-note">{table.reviewNote}</p>
-      ) : null}
       {available ? (
         <>
           <div className="rv-quantity-row">
             <label htmlFor="rv-quantity">
-              Seus lugares<small>Capacidade de {table.capacity} pessoas</small>
+              Seus lugares
+              <small>Capacidade de {capacity} pessoas no setor</small>
             </label>
             <div className="rv-stepper">
               <button
@@ -63,7 +63,7 @@ export function TableSelectionModal({
               </output>
               <button
                 type="button"
-                disabled={quantity >= (table.capacity ?? 0)}
+                disabled={quantity >= capacity}
                 onClick={() => setQuantity((value) => value + 1)}
                 aria-label="Aumentar quantidade"
               >
@@ -85,7 +85,7 @@ export function TableSelectionModal({
             type="button"
             className="rv-button rv-button-full"
             onClick={() => {
-              setTable(table.id, quantity);
+              setSectorSelection(sector.id, quantity);
               onClose();
             }}
           >
@@ -103,7 +103,8 @@ export function TableSelectionModal({
         </button>
       )}
       <p className="rv-fine-print">
-        Prévia visual · sua seleção não gera uma reserva.
+        A mesa exata dentro do setor é definida pela equipe do Zin no dia do
+        evento. Prévia visual · sua seleção não gera uma reserva.
       </p>
     </Dialog>
   );

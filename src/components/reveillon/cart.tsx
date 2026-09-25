@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Icon } from "@/components/icons";
 import {
-  tableConfig,
+  sectorConfig,
   eventConfig,
   formatMoney,
   getCartTotal,
@@ -18,18 +18,20 @@ export function CartItems({
   items: CartItem[];
   removable?: boolean;
 }) {
-  const { removeTable } = useReveillon();
+  const { removeSector } = useReveillon();
   return (
     <ul className="rv-cart-items">
       {items.map((item) => {
-        const table = tableConfig.find((entry) => entry.id === item.tableId)!;
+        const sector = sectorConfig.find(
+          (entry) => entry.id === item.sectorId,
+        )!;
         return (
-          <li key={item.tableId}>
-            <div className="rv-cart-table-number">{table.number}</div>
+          <li key={item.sectorId}>
+            <div className="rv-cart-table-number">{sector.id}</div>
             <div className="rv-cart-item-copy">
-              <strong>Mesa {table.number}</strong>
+              <strong>Setor {sector.id}</strong>
               <span>
-                Setor {table.sector} · {item.quantity}{" "}
+                {sector.name} · {item.quantity}{" "}
                 {item.quantity === 1 ? "lugar" : "lugares"}
               </span>
               <span>
@@ -40,8 +42,8 @@ export function CartItems({
               <button
                 type="button"
                 className="rv-icon-button"
-                onClick={() => removeTable(item.tableId)}
-                aria-label={`Remover mesa ${table.number} do setor ${table.sector}`}
+                onClick={() => removeSector(item.sectorId)}
+                aria-label={`Remover setor ${sector.id} da seleção`}
               >
                 <svg
                   width="17"
@@ -85,7 +87,7 @@ export function Cart({
           <Icon name="glass" />
           <strong>Um lugar para brindar.</strong>
           <p>
-            Escolha uma mesa no mapa
+            Escolha um setor no mapa
             <br />e traga suas boas companhias.
           </p>
         </div>
@@ -110,7 +112,7 @@ export function Cart({
         </Link>
       ) : (
         <button type="button" className="rv-button rv-button-full" disabled>
-          SELECIONE UMA MESA <span aria-hidden="true">→</span>
+          SELECIONE UM SETOR <span aria-hidden="true">→</span>
         </button>
       )}
       <p className="rv-cart-disclaimer">

@@ -11,6 +11,7 @@ import {
   sectorConfig,
   tableConfig,
   statusLabels,
+  sectorCapacity,
   type SectorId,
   type VenueTable,
   type VenueSector,
@@ -25,14 +26,41 @@ const clamp = (value: number, min: number, max: number) =>
 function VenueSectorShape({
   sector,
   dimmed,
+  inCart,
+  onSelect,
 }: {
   sector: VenueSector;
   dimmed: boolean;
+  inCart: boolean;
+  onSelect: (id: SectorId) => void;
 }) {
+  const capacity = sectorCapacity(sector.id);
+  const soldOut = capacity <= 0;
+  const disabled = soldOut || dimmed;
   return (
     <g
-      className={dimmed ? "rv-sector rv-dimmed" : "rv-sector"}
+      className={[
+        "rv-sector",
+        dimmed ? "rv-dimmed" : "",
+        soldOut ? "rv-sector-soldout" : "",
+        inCart ? "rv-sector-in-cart" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
       style={{ "--sector-color": sector.color } as CSSProperties}
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      aria-disabled={disabled}
+      aria-label={`Setor ${sector.id}, ${sector.name}, ${soldOut ? "esgotado nesta prévia" : `${capacity} lugares disponíveis`}`}
+      onClick={() => {
+        if (!disabled) onSelect(sector.id);
+      }}
+      onKeyDown={(event) => {
+        if ((event.key === "Enter" || event.key === " ") && !disabled) {
+          event.preventDefault();
+          onSelect(sector.id);
+        }
+      }}
     >
       <rect
         x={sector.x}
@@ -43,20 +71,28 @@ function VenueSectorShape({
         className="rv-sector-outline"
       />
       <rect
-        x={sector.x + sector.width / 2 - 44}
-        y={sector.y - 13}
-        width="88"
-        height="24"
-        rx="4"
+        x={sector.x + sector.width / 2 - 48}
+        y={sector.y - 19}
+        width="96"
+        height="38"
+        rx="6"
         className="rv-sector-label-bg"
       />
       <text
         x={sector.x + sector.width / 2}
-        y={sector.y + 4}
+        y={sector.y - 3}
         textAnchor="middle"
         className="rv-sector-label"
       >
         SETOR {sector.id}
+      </text>
+      <text
+        x={sector.x + sector.width / 2}
+        y={sector.y + 12}
+        textAnchor="middle"
+        className="rv-sector-sub"
+      >
+        {soldOut ? "ESGOTADO" : `${capacity} LUGARES`}
       </text>
     </g>
   );
@@ -240,7 +276,7 @@ function VenueTableShape({
       role="button"
       tabIndex={available && !dimmed ? 0 : -1}
       aria-disabled={!available || dimmed}
-      aria-label={`Mesa ${table.number}, ${table.sector ? `setor ${table.sector}` : "setor a confirmar"}, ${table.capacity ?? "capacidade a confirmar"}${table.capacity ? " lugares" : ""}, ${statusLabels[status]}`}
+      aria-label={`Mesa de referência ${table.number}, ${table.sector ? `setor ${table.sector}` : "fora dos setores"}, ${statusLabels[status]}. A compra é feita por setor.`}
       aria-pressed={selected}
       onPointerEnter={(event) => {
         if (event.pointerType !== "touch") onHover(table, event.currentTarget);
@@ -352,13 +388,11 @@ export function SectorFilter({
 export function InteractiveVenueMap({
   sector,
   onSectorChange,
-  focusedTable,
-  onSelect,
+  onSelectSector,
 }: {
   sector: SectorId | null;
   onSectorChange: (id: SectorId | null) => void;
-  focusedTable: VenueTable | null;
-  onSelect: (table: VenueTable) => void;
+  onSelectSector: (id: SectorId) => void;
 }) {
   const { items } = useReveillon();
   const viewport = useRef<HTMLDivElement>(null);
@@ -391,14 +425,6 @@ export function InteractiveVenueMap({
   }, []);
 
   useEffect(() => {
-    if (focusedTable) {
-      setCamera({
-        x: focusedTable.x,
-        y: focusedTable.y,
-        width: Math.max(320, 260 * aspect),
-      });
-      return;
-    }
     const match = sectorConfig.find((item) => item.id === sector);
     if (match) {
       setCamera({
@@ -423,7 +449,7 @@ export function InteractiveVenueMap({
         width: Math.max(1100, (floor === "lower" ? 790 : 685) * aspect),
       });
     setTooltip(null);
-  }, [sector, floor, focusedTable, aspect, size.width]);
+  }, [sector, floor, aspect, size.width]);
 
   const keepInBounds = (next: Camera): Camera => ({
     width: clamp(next.width, 200, 2300),
@@ -634,6 +660,11 @@ export function InteractiveVenueMap({
               key={item.id}
               sector={item}
               dimmed={!!sector && sector !== item.id}
+              inCart={items.some((cartItem) => cartItem.sectorId === item.id)}
+              onSelect={(id) => {
+                setTooltip(null);
+                onSelectSector(id);
+              }}
             />
           ))}
           <VenueLandmarks />
@@ -641,11 +672,14 @@ export function InteractiveVenueMap({
             <VenueTableShape
               key={table.id}
               table={table}
-              selected={items.some((item) => item.tableId === table.id)}
+              selected={
+                !!table.sector &&
+                items.some((item) => item.sectorId === table.sector)
+              }
               dimmed={!!sector && sector !== table.sector}
               onSelect={() => {
                 setTooltip(null);
-                onSelect(table);
+                if (table.sector) onSelectSector(table.sector);
               }}
               onHover={hover}
               onLeave={() => setTooltip(null)}
@@ -702,25 +736,22 @@ export function InteractiveVenueMap({
             style={{ left: tooltip.x, top: tooltip.y }}
           >
             <strong>
-              Mesa {tooltip.table.number}{" "}
+              {tooltip.table.sector
+                ? `Setor ${tooltip.table.sector}`
+                : "Fora dos setores"}{" "}
               <span>
-                {tooltip.table.sector
-                  ? `Setor ${tooltip.table.sector}`
-                  : "Salão"}
+                {sectorConfig.find((s) => s.id === tooltip.table.sector)
+                  ?.name ?? ""}
               </span>
             </strong>
             <span>
-              {tooltip.table.capacity
-                ? `${tooltip.table.capacity} lugares`
-                : "Capacidade a confirmar"}{" "}
-              ·{" "}
-              {items.some((item) => item.tableId === tooltip.table.id)
-                ? "Sua seleção"
-                : statusLabels[tooltip.table.status]}
+              {tooltip.table.sector
+                ? sectorCapacity(tooltip.table.sector) > 0
+                  ? `${sectorCapacity(tooltip.table.sector)} lugares no setor`
+                  : "Setor esgotado nesta prévia"
+                : "Não participa da venda por setor"}
             </span>
-            {tooltip.table.needsReview ? (
-              <small>* Identificação/capacidade em revisão</small>
-            ) : null}
+            <small>Mesa {tooltip.table.number} de referência no mapa</small>
           </div>
         ) : null}
         <div className="rv-map-instructions">
@@ -742,6 +773,10 @@ export function InteractiveVenueMap({
           </span>
         ))}
       </div>
+      <p className="rv-map-sector-note">
+        Estados das mesas são ilustrativos. A seleção e a compra acontecem por
+        setor — toque em qualquer ponto do setor para escolher.
+      </p>
     </div>
   );
 }

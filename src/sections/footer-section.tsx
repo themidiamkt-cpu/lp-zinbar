@@ -44,7 +44,7 @@ export function FooterSection({ event = false }: { event?: boolean }) {
               rel={actions.reservation.external ? "noreferrer" : undefined}
               className="focus-ring text-mist/82 transition duration-300 hover:text-champagne"
             >
-              {event ? "Escolher mesa · Réveillon" : "Reservar mesa"}
+              {event ? "Escolher setor · Réveillon" : "Reservar mesa"}
             </a>
             <a
               href={actions.menu.href}

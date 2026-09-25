@@ -36,19 +36,19 @@ export const eventConfig = {
   ],
   faq: [
     {
-      question: "Como escolho minha mesa?",
+      question: "Como escolho meu lugar?",
       answer:
-        "Explore o mapa, filtre por setor e toque em uma mesa disponível. Você poderá ver os lugares e simular sua seleção. Esta prévia não realiza reservas.",
+        "Explore o mapa, escolha um setor disponível e informe a quantidade de lugares. Você poderá simular sua seleção. Esta prévia não realiza reservas.",
     },
     {
       question: "Posso comprar mais de um lugar?",
       answer:
-        "Nesta demonstração, você pode selecionar vários lugares, respeitando a capacidade de cada mesa, e adicionar mesas diferentes ao carrinho. As condições oficiais serão confirmadas.",
+        "Nesta demonstração, você pode selecionar vários lugares dentro de um setor, respeitando a capacidade disponível, e adicionar setores diferentes ao carrinho. As condições oficiais serão confirmadas.",
     },
     {
-      question: "Posso comprar a mesa inteira?",
+      question: "Posso escolher a mesa exata?",
       answer:
-        "Você pode simular a seleção de todos os lugares disponíveis de uma mesa. A política de venda por mesa será divulgada antes da abertura das vendas.",
+        "Não. Você escolhe o setor e a quantidade de lugares; a mesa específica dentro do setor é definida pela equipe do Zin no dia do evento.",
     },
     {
       question: "Como recebo meu convite?",
@@ -377,7 +377,17 @@ export const statusLabels = {
 };
 export const formatMoney = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-export type CartItem = { tableId: string; quantity: number };
+
+// A venda é por setor, não por mesa específica: a mesa exata é definida pela
+// equipe do Zin no dia do evento. Capacidade do setor = soma das mesas com
+// status "available" (mesas em revisão/reservadas/vendidas não contam).
+export function sectorCapacity(sectorId: SectorId): number {
+  return tableConfig
+    .filter((entry) => entry.sector === sectorId && entry.status === "available")
+    .reduce((sum, entry) => sum + (entry.capacity ?? 0), 0);
+}
+
+export type CartItem = { sectorId: SectorId; quantity: number };
 export function getCartTotal(items: CartItem[]) {
   return items.reduce(
     (sum, item) => sum + item.quantity * eventConfig.pricePerPerson,
@@ -391,22 +401,22 @@ export function validCartItems(value: unknown): CartItem[] {
     .filter((item): item is CartItem => {
       if (
         !item ||
-        typeof item.tableId !== "string" ||
+        typeof item.sectorId !== "string" ||
         !Number.isInteger(item.quantity)
       )
         return false;
-      const target = tableConfig.find((entry) => entry.id === item.tableId);
+      const sector = sectorConfig.find((entry) => entry.id === item.sectorId);
+      const capacity = sector ? sectorCapacity(sector.id) : 0;
       if (
-        !target ||
-        target.status !== "available" ||
-        !target.capacity ||
+        !sector ||
+        capacity < 1 ||
         item.quantity < 1 ||
-        item.quantity > target.capacity ||
-        seen.has(item.tableId)
+        item.quantity > capacity ||
+        seen.has(item.sectorId)
       )
         return false;
-      seen.add(item.tableId);
+      seen.add(item.sectorId);
       return true;
     })
-    .map(({ tableId, quantity }) => ({ tableId, quantity }));
+    .map(({ sectorId, quantity }) => ({ sectorId, quantity }));
 }
