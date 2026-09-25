@@ -5,19 +5,23 @@ import { landingData } from "@/data/landing-data";
 
 const { actions, business, footer, schedule } = landingData;
 
-export function FooterSection() {
+export function FooterSection({ event = false }: { event?: boolean }) {
   return (
     <footer className="relative border-t border-white/10 pb-28 pt-14 lg:pb-12">
-      <div className="ornament-line absolute inset-x-10 top-0 max-w-[260px]" aria-hidden />
+      <div
+        className="ornament-line absolute inset-x-10 top-0 max-w-[260px]"
+        aria-hidden
+      />
       <Container className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
         <div className="sm:col-span-2 lg:col-span-1">
-          <Logo compact />
+          <Logo compact event={event} />
           <p className="mt-5 max-w-md text-sm leading-7 text-mist/76">
-            {business.name} • {business.fullAddress}. Um endereço no Taquaral para almoço,
-            jantar e happy hour com atmosfera acolhedora para família, amigos e encontros
-            que pedem mais tempo à mesa.
+            {event ? "Zin Bar & Restaurante" : business.name} •{" "}
+            {business.fullAddress}. Um endereço no Taquaral para almoço, jantar
+            e happy hour com atmosfera acolhedora para família, amigos e
+            encontros que pedem mais tempo à mesa.
           </p>
-          <div className="mt-5">
+          <div className={event ? "hidden" : "mt-5"}>
             <OpenStatus
               schedule={schedule.week}
               timeZone={schedule.timezone}
@@ -35,12 +39,12 @@ export function FooterSection() {
               <span aria-hidden>→</span>
             </a>
             <a
-              href={actions.reservation.href}
+              href={event ? "/reveillon#mesas" : actions.reservation.href}
               target={actions.reservation.external ? "_blank" : undefined}
               rel={actions.reservation.external ? "noreferrer" : undefined}
               className="focus-ring text-mist/82 transition duration-300 hover:text-champagne"
             >
-              Reservar mesa
+              {event ? "Escolher mesa · Réveillon" : "Reservar mesa"}
             </a>
             <a
               href={actions.menu.href}
@@ -62,7 +66,7 @@ export function FooterSection() {
             {footer.usefulLinks.map((link) => (
               <li key={link.label}>
                 <a
-                  href={link.href}
+                  href={event ? `/${link.href}` : link.href}
                   className="focus-ring transition duration-300 hover:text-champagne"
                 >
                   {link.label}
@@ -92,7 +96,9 @@ export function FooterSection() {
             ))}
           </ul>
 
-          <p className="mt-7 text-xs leading-6 text-mist/56">{footer.copyright}</p>
+          <p className="mt-7 text-xs leading-6 text-mist/56">
+            {footer.copyright}
+          </p>
         </div>
       </Container>
 

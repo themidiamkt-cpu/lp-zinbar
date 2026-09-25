@@ -5,14 +5,15 @@ import { cn } from "@/utils/cn";
 
 type LogoProps = {
   compact?: boolean;
+  event?: boolean;
 };
 
-export function Logo({ compact = false }: LogoProps) {
+export function Logo({ compact = false, event = false }: LogoProps) {
   return (
     <div className="flex items-center gap-3">
       <Image
         src="/images/logo.png"
-        alt={`Logo ${landingData.business.label}`}
+        alt={`Logo ${event ? "Zin Bar & Restaurante" : landingData.business.label}`}
         width={48}
         height={48}
         className="h-12 w-12 rounded-full shadow-glow"
@@ -21,7 +22,7 @@ export function Logo({ compact = false }: LogoProps) {
 
       <div>
         <p className="font-serif text-xl leading-none tracking-[0.08em] text-ivory">
-          {landingData.business.label}
+          {event ? "Zin Bar & Restaurante" : landingData.business.label}
         </p>
         <p
           className={cn(
@@ -29,7 +30,7 @@ export function Logo({ compact = false }: LogoProps) {
             compact && "hidden sm:block",
           )}
         >
-          {landingData.business.brandDescriptor}
+          {event ? "Réveillon 2027" : landingData.business.brandDescriptor}
         </p>
       </div>
     </div>
