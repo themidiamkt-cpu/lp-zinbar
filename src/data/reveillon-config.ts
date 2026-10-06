@@ -4,6 +4,7 @@ import { landingData } from "@/data/landing-data";
 // Coordenadas no espaço original da planta (1070 × 1470); não renumerar ambiguidades.
 export const eventConfig = {
   name: "Réveillon 2027",
+  whatsappHref: `${landingData.actions.whatsapp.href}?text=${encodeURIComponent("Olá! Gostaria de saber sobre o Réveillon 2027 no Zin: disponibilidade, valores e como comprar.")}`,
   venue: "Zin Bar & Restaurante",
   date: "Data a confirmar",
   time: "Horário a confirmar",
@@ -38,27 +39,27 @@ export const eventConfig = {
     {
       question: "Como escolho meu lugar?",
       answer:
-        "Explore o mapa, escolha um setor disponível e informe a quantidade de lugares. Você poderá simular sua seleção. Esta prévia não realiza reservas.",
+        "Conheça os ambientes pelo mapa e fale com a equipe do Zin no WhatsApp para consultar disponibilidade, valores e comprar seus lugares.",
     },
     {
       question: "Posso comprar mais de um lugar?",
       answer:
-        "Nesta demonstração, você pode selecionar vários lugares dentro de um setor, respeitando a capacidade disponível, e adicionar setores diferentes ao carrinho. As condições oficiais serão confirmadas.",
+        "Informe à equipe pelo WhatsApp quantas pessoas vão com você. O atendimento confirma a disponibilidade e orienta a compra para o seu grupo.",
     },
     {
       question: "Posso escolher a mesa exata?",
       answer:
-        "Não. Você escolhe o setor e a quantidade de lugares; a mesa específica dentro do setor é definida pela equipe do Zin no dia do evento.",
+        "Converse com a equipe pelo WhatsApp sobre os setores e a acomodação do seu grupo. A mesa dentro do setor é definida pela equipe do Zin.",
     },
     {
       question: "Como recebo meu convite?",
       answer:
-        "O formato e o canal de envio serão informados em breve. Nesta prévia, o checkout e a confirmação são apenas demonstrativos; nenhum convite é emitido.",
+        "A equipe do Zin informa pelo WhatsApp os detalhes da confirmação e como você receberá seu convite após a compra.",
     },
     {
       question: "O convite terá QR Code?",
       answer:
-        "A experiência prevista inclui um convite com QR Code. Nesta etapa visual, não há geração de código nem validação de entrada.",
+        "A equipe do Zin orienta pelo WhatsApp sobre o formato do convite e a entrada no evento.",
     },
     {
       question: "Crianças precisam de ingresso?",
@@ -383,7 +384,9 @@ export const formatMoney = (value: number) =>
 // status "available" (mesas em revisão/reservadas/vendidas não contam).
 export function sectorCapacity(sectorId: SectorId): number {
   return tableConfig
-    .filter((entry) => entry.sector === sectorId && entry.status === "available")
+    .filter(
+      (entry) => entry.sector === sectorId && entry.status === "available",
+    )
     .reduce((sum, entry) => sum + (entry.capacity ?? 0), 0);
 }
 

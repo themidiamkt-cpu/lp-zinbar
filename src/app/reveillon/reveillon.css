@@ -2700,6 +2700,26 @@
   }
 }
 
+.rv-whatsapp-map-contact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 30px;
+  color: #e8d4ae;
+  font-size: 14px;
+  line-height: 1.8;
+}
+@media (max-width: 767px) {
+  .rv-whatsapp-map-contact {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .rv-whatsapp-map-contact .button-primary {
+    width: 100%;
+  }
+}
+
 /* Direção de arte da campanha: luz champagne, papel creme e vinho. */
 .rv-shell:has(.rv-hero) {
   --rv-gold: #e8d4ae;

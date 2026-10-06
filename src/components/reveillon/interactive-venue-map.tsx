@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent,
+} from "react";
 import {
   sectorConfig,
   sectorCapacity,
@@ -20,15 +26,17 @@ function VenueSectorShape({
   inCart,
   scale,
   onSelect,
+  informational = false,
 }: {
   sector: VenueSector;
   dimmed: boolean;
   inCart: boolean;
   scale: number;
   onSelect: (id: SectorId) => void;
+  informational?: boolean;
 }) {
   const capacity = sectorCapacity(sector.id);
-  const soldOut = capacity <= 0;
+  const soldOut = !informational && capacity <= 0;
   const disabled = soldOut || dimmed;
   const cx = sector.x + sector.width / 2;
   const cy = sector.y + sector.height / 2;
@@ -46,7 +54,11 @@ function VenueSectorShape({
       role="button"
       tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
-      aria-label={`Setor ${sector.id}, ${sector.name}, ${soldOut ? "esgotado nesta prévia" : `${capacity} lugares disponíveis`}`}
+      aria-label={
+        informational
+          ? `Conhecer setor ${sector.id}, ${sector.name}`
+          : `Setor ${sector.id}, ${sector.name}, ${soldOut ? "esgotado nesta prévia" : `${capacity} lugares disponíveis`}`
+      }
       onClick={() => {
         if (!disabled) onSelect(sector.id);
       }}
@@ -81,7 +93,11 @@ function VenueSectorShape({
           SETOR {sector.id}
         </text>
         <text x="0" y="13" textAnchor="middle" className="rv-sector-sub">
-          {soldOut ? "ESGOTADO" : `${capacity} LUGARES`}
+          {informational
+            ? "AMBIENTE"
+            : soldOut
+              ? "ESGOTADO"
+              : `${capacity} LUGARES`}
         </text>
       </g>
     </g>
@@ -196,7 +212,14 @@ function VenueLandmarks({ scale }: { scale: number }) {
         vertical
         scale={scale}
       />
-      <Landmark x={125} y={702} width={235} height={48} label="BAR" scale={scale} />
+      <Landmark
+        x={125}
+        y={702}
+        width={235}
+        height={48}
+        label="BAR"
+        scale={scale}
+      />
       <Landmark
         x={390}
         y={665}
@@ -213,7 +236,14 @@ function VenueLandmarks({ scale }: { scale: number }) {
         label="BUFFET QUENTE"
         scale={scale}
       />
-      <Landmark x={690} y={715} width={260} height={45} label="CAIXA" scale={scale} />
+      <Landmark
+        x={690}
+        y={715}
+        width={260}
+        height={45}
+        label="CAIXA"
+        scale={scale}
+      />
       <ZoneLabel x={530} y={605} scale={scale}>
         SALÃO · ENTRADA
       </ZoneLabel>
@@ -239,8 +269,22 @@ function VenueLandmarks({ scale }: { scale: number }) {
         vertical
         scale={scale}
       />
-      <Landmark x={70} y={1331} width={292} height={42} label="ESCADA ↑" scale={scale} />
-      <Landmark x={443} y={1360} width={202} height={60} label="MÚSICO" scale={scale} />
+      <Landmark
+        x={70}
+        y={1331}
+        width={292}
+        height={42}
+        label="ESCADA ↑"
+        scale={scale}
+      />
+      <Landmark
+        x={443}
+        y={1360}
+        width={202}
+        height={60}
+        label="MÚSICO"
+        scale={scale}
+      />
       <ZoneLabel x={479} y={1156} scale={scale}>
         MEZANINO
       </ZoneLabel>
@@ -302,10 +346,12 @@ export function InteractiveVenueMap({
   sector,
   onSectorChange,
   onSelectSector,
+  informational = false,
 }: {
   sector: SectorId | null;
   onSectorChange: (id: SectorId | null) => void;
   onSelectSector: (id: SectorId) => void;
+  informational?: boolean;
 }) {
   const { items } = useReveillon();
   const viewport = useRef<HTMLDivElement>(null);
@@ -556,7 +602,11 @@ export function InteractiveVenueMap({
               key={item.id}
               sector={item}
               dimmed={!!sector && sector !== item.id}
-              inCart={items.some((cartItem) => cartItem.sectorId === item.id)}
+              inCart={
+                !informational &&
+                items.some((cartItem) => cartItem.sectorId === item.id)
+              }
+              informational={informational}
               scale={scale}
               onSelect={onSelectSector}
             />
@@ -612,29 +662,37 @@ export function InteractiveVenueMap({
             : "ARRASTE PARA EXPLORAR"}
           <span>Use + / − ou dois dedos para ampliar</span>
         </div>
-        <span className="rv-map-edge-fade rv-map-edge-fade-left" aria-hidden="true" />
-        <span className="rv-map-edge-fade rv-map-edge-fade-right" aria-hidden="true">
+        <span
+          className="rv-map-edge-fade rv-map-edge-fade-left"
+          aria-hidden="true"
+        />
+        <span
+          className="rv-map-edge-fade rv-map-edge-fade-right"
+          aria-hidden="true"
+        >
           <span className="rv-map-edge-chevron">›</span>
         </span>
       </div>
-      <div className="rv-map-legend" aria-label="Legenda do mapa">
-        <span>
-          <i className="rv-legend-available" />
-          Disponível
-        </span>
-        <span>
-          <i className="rv-legend-selected" />
-          Sua seleção
-        </span>
-        <span>
-          <i className="rv-legend-unavailable" />
-          Esgotado
-        </span>
-      </div>
+      {!informational && (
+        <div className="rv-map-legend" aria-label="Legenda do mapa">
+          <span>
+            <i className="rv-legend-available" />
+            Disponível
+          </span>
+          <span>
+            <i className="rv-legend-selected" />
+            Sua seleção
+          </span>
+          <span>
+            <i className="rv-legend-unavailable" />
+            Esgotado
+          </span>
+        </div>
+      )}
       <p className="rv-map-sector-note">
-        A seleção e a compra acontecem por setor — toque em qualquer ponto do
-        setor para escolher. A mesa exata é definida pela equipe do Zin no dia
-        do evento.
+        {informational
+          ? "Toque em um setor para conhecer sua localização. Consulte disponibilidade e valores pelo WhatsApp."
+          : "A seleção e a compra acontecem por setor — toque em qualquer ponto do setor para escolher. A mesa exata é definida pela equipe do Zin no dia do evento."}
       </p>
     </div>
   );

@@ -3,6 +3,7 @@ import { ButtonLink } from "@/components/button-link";
 import { Logo } from "@/components/logo";
 import { OpenStatus } from "@/components/open-status";
 import { landingData } from "@/data/landing-data";
+import { eventConfig } from "@/data/reveillon-config";
 
 const { actions, business, footer, schedule } = landingData;
 
@@ -10,7 +11,7 @@ export function HeaderSection({ event = false }: { event?: boolean }) {
   const links = event
     ? [
         { label: "A experiência", href: "/reveillon#experiencia" },
-        { label: "Escolha seu setor", href: "/reveillon#mesas" },
+        { label: "Os ambientes", href: "/reveillon#mesas" },
         { label: "O evento", href: "/reveillon#evento" },
         { label: "Dúvidas", href: "/reveillon#faq" },
       ]
@@ -55,12 +56,12 @@ export function HeaderSection({ event = false }: { event?: boolean }) {
               />
             </div>
             <ButtonLink
-              href={event ? "/reveillon#mesas" : actions.reservation.href}
-              icon={event ? "spark" : actions.reservation.icon}
-              external={event ? false : actions.reservation.external}
+              href={event ? eventConfig.whatsappHref : actions.reservation.href}
+              icon={event ? "whatsapp" : actions.reservation.icon}
+              external={event ? true : actions.reservation.external}
               className="px-3 text-sm sm:px-5 sm:text-base"
             >
-              {event ? "Setores" : actions.reservation.shortLabel}
+              {event ? "WhatsApp" : actions.reservation.shortLabel}
             </ButtonLink>
             <ButtonLink
               href={actions.directions.href}

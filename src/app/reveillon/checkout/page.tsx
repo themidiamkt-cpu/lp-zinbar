@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
-import { CheckoutMock } from "@/components/reveillon/checkout-mock";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: { absolute: "Checkout demonstrativo | Zin Bar & Restaurante" },
   alternates: { canonical: "/reveillon/checkout" },
 };
 export default function CheckoutPage() {
-  return (
-    <main id="conteudo">
-      <CheckoutMock />
-    </main>
-  );
+  redirect("/reveillon");
 }

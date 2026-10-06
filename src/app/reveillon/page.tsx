@@ -6,7 +6,7 @@ import {
   ReveillonFAQ,
   ReveillonCTA,
 } from "@/components/reveillon/event-sections";
-import { TableExperience } from "@/components/reveillon/table-experience";
+import { VenueOverview } from "@/components/reveillon/venue-overview";
 
 export default function ReveillonPage() {
   return (
@@ -14,7 +14,7 @@ export default function ReveillonPage() {
       <ReveillonHero />
       <EventHighlights />
       <HowItWorks />
-      <TableExperience />
+      <VenueOverview />
       <EventInfo />
       <ReveillonFAQ />
       <ReveillonCTA />

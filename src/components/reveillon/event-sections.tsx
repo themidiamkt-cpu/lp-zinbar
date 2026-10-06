@@ -33,20 +33,19 @@ export function ReveillonHero() {
             <br />O seu lugar à mesa, em uma noite para celebrar.
           </p>
           <div className="rv-hero-actions">
-            <ButtonLink href="#mesas">ESCOLHER MEU SETOR</ButtonLink>
+            <ButtonLink
+              href={eventConfig.whatsappHref}
+              external
+              icon="whatsapp"
+            >
+              COMPRAR PELO WHATSAPP
+            </ButtonLink>
             <a className="rv-text-link" href="#evento">
               VER DETALHES DO EVENTO <span aria-hidden="true">↗</span>
             </a>
           </div>
-          <a
-            className="rv-text-link rv-consult-invitations"
-            href="/reveillon/convites"
-          >
-            JÁ TENHO UM CÓDIGO · CONSULTAR CONVITE ↗
-          </a>
           <p className="rv-preview-note">
-            <span className="rv-small-dot" /> Prévia do evento · vendas ainda
-            não abertas
+            <span className="rv-small-dot" /> Vendas e informações pelo WhatsApp
           </p>
         </div>
         <div className="rv-hero-art">
@@ -154,17 +153,21 @@ export function EventHighlights() {
 
 export function HowItWorks() {
   const steps = [
-    ["01", "Escolha seu setor", "Explore os ambientes e encontre o seu lugar."],
+    ["01", "Conheça os ambientes", "Explore o mapa e os setores do Zin."],
     [
       "02",
-      "Selecione seus lugares",
-      "Uma companhia especial ou a turma inteira.",
+      "Chame no WhatsApp",
+      "Fale com a equipe sobre a noite e os lugares para seu grupo.",
     ],
-    ["03", "Faça o pagamento", "Confira o resumo da sua seleção."],
+    [
+      "03",
+      "Combine sua compra",
+      "Consulte valores, disponibilidade e condições com a equipe.",
+    ],
     [
       "04",
-      "Receba seu convite com QR Code",
-      "Tudo pronto para viver uma noite especial.",
+      "Receba a confirmação",
+      "A equipe orienta os próximos passos pelo WhatsApp.",
     ],
   ];
   return (
@@ -192,8 +195,8 @@ export function HowItWorks() {
           ))}
         </div>
         <p className="rv-fine-print">
-          Experiência ilustrativa. Pagamento e emissão de convites não estão
-          ativos nesta prévia.
+          A compra e a confirmação dos lugares são feitas diretamente com a
+          equipe do Zin pelo WhatsApp.
         </p>
       </Container>
     </section>
@@ -335,11 +338,13 @@ export function ReveillonCTA() {
             <em>começa aqui.</em>
           </h2>
           <p>
-            Escolha seu setor e prepare-se para viver
+            Fale com a equipe e prepare-se para viver
             <br />
             uma noite especial no Zin.
           </p>
-          <ButtonLink href="#mesas">ESCOLHER MEU SETOR</ButtonLink>
+          <ButtonLink href={eventConfig.whatsappHref} external icon="whatsapp">
+            COMPRAR PELO WHATSAPP
+          </ButtonLink>
           <span className="rv-cta-year" aria-hidden="true">
             2027
           </span>

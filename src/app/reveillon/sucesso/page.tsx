@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
-import { SuccessMock } from "@/components/reveillon/success-mock";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: { absolute: "Confirmação demonstrativa | Zin Bar & Restaurante" },
   alternates: { canonical: "/reveillon/sucesso" },
 };
 export default function SuccessPage() {
-  return (
-    <main id="conteudo">
-      <SuccessMock />
-    </main>
-  );
+  redirect("/reveillon");
 }

@@ -2,6 +2,7 @@ import { Container } from "@/components/container";
 import { Logo } from "@/components/logo";
 import { OpenStatus } from "@/components/open-status";
 import { landingData } from "@/data/landing-data";
+import { eventConfig } from "@/data/reveillon-config";
 
 const { actions, business, footer, schedule } = landingData;
 
@@ -39,12 +40,16 @@ export function FooterSection({ event = false }: { event?: boolean }) {
               <span aria-hidden>→</span>
             </a>
             <a
-              href={event ? "/reveillon#mesas" : actions.reservation.href}
-              target={actions.reservation.external ? "_blank" : undefined}
-              rel={actions.reservation.external ? "noreferrer" : undefined}
+              href={event ? eventConfig.whatsappHref : actions.reservation.href}
+              target={
+                event || actions.reservation.external ? "_blank" : undefined
+              }
+              rel={
+                event || actions.reservation.external ? "noreferrer" : undefined
+              }
               className="focus-ring text-mist/82 transition duration-300 hover:text-champagne"
             >
-              {event ? "Escolher setor · Réveillon" : "Reservar mesa"}
+              {event ? "Réveillon · WhatsApp" : "Reservar mesa"}
             </a>
             <a
               href={actions.menu.href}

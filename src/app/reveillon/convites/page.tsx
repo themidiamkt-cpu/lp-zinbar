@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
-import { InvitationLookup } from "@/components/reveillon/invitation-preview";
+import { redirect } from "next/navigation";
 export const metadata: Metadata = {
   title: { absolute: "Consultar convites demonstrativos | Zin" },
   alternates: { canonical: "/reveillon/convites" },
 };
 export default function InvitationsPage() {
-  return (
-    <main id="conteudo">
-      <InvitationLookup />
-    </main>
-  );
+  redirect("/reveillon");
 }
