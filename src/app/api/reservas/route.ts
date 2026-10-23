@@ -9,6 +9,41 @@ import {
   isReservationTimeAfterLimit,
 } from "@/utils/schedule";
 
+const OPENAI_PIXEL_ID = "YG5GhGHvuc5Nx8sSkYe3xy";
+
+async function sendOpenAILead(sourceUrl?: string) {
+  const apiKey = process.env.OPENAI_PIXEL_API_KEY;
+
+  if (!apiKey) {
+    return;
+  }
+
+  try {
+    await fetch(`https://bzr.openai.com/v1/events?pid=${OPENAI_PIXEL_ID}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        validate_only: false,
+        events: [
+          {
+            id: crypto.randomUUID(),
+            type: "lead_created",
+            timestamp_ms: Date.now(),
+            source_url: sourceUrl || "https://zinbar.com.br/",
+            action_source: "web",
+            data: { type: "customer_action" },
+          },
+        ],
+      }),
+    });
+  } catch {
+    // Conversion tracking must never block a reservation.
+  }
+}
+
 const WEBHOOK_URL = "https://automacao2.themidiamarketing.com.br/webhook/zin-reservas";
 const { reservation, schedule } = landingData;
 
@@ -154,6 +189,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ error: "Webhook request failed" }, { status: 502 });
   }
+
+  await sendOpenAILead(payload.pageUrl);
 
   return NextResponse.json({ ok: true });
 }

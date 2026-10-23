@@ -39,6 +39,13 @@ export default function ReservationConfirmedPage() {
           }
         `}
       </Script>
+      <Script id="openai-reservation-lead" strategy="afterInteractive">
+        {`
+          if (typeof oaiq === 'function') {
+            oaiq('measure', 'lead_created', { type: 'customer_action' });
+          }
+        `}
+      </Script>
       <main className="min-h-screen bg-ink px-4 py-8 text-ivory sm:px-6">
         <Container className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
           <section className="premium-panel-strong relative w-full max-w-3xl overflow-hidden p-6 text-center sm:p-10 lg:p-12">
